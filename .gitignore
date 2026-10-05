@@ -1,0 +1,28 @@
+# --- Extension signing key: leaking this lets anyone ship updates as BlackFish ---
+*.pem
+*.crx
+*.zip
+
+# --- Secrets / API keys (AI-assist endpoint keys, Web Store publish creds) ---
+.env
+.env.*
+!.env.example
+*.key
+secrets.*
+credentials.json
+client_secret*.json
+token.json
+.chrome-webstore*
+
+# --- Local tooling / OS noise ---
+node_modules/
+dist/
+build/
+*.log
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Claude context (local only) ---
+.claude/
