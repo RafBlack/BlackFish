@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-24T14:23:13.990Z",
+  "generatedAt": "2026-10-24T17:06:29.099Z",
   "browser": "141.0.7390.37",
   "synthetic": true,
   "limitation": "Scenario regression baseline only. Parameter variants are correlated. These measurements do not establish real-world detection accuracy or beta readiness.",
@@ -18,9 +18,9 @@
       "benignInterruptionRate": 0,
       "phishingInterruptionRate": 0.6,
       "scanMs": {
-        "median": 7.099999999627471,
-        "p95": 13,
-        "max": 59.29999999888241
+        "median": 7.100000001490116,
+        "p95": 13.600000001490116,
+        "max": 48.30000000074506
       }
     },
     "tuning": {
@@ -36,9 +36,9 @@
       "benignInterruptionRate": 0,
       "phishingInterruptionRate": 0.6666666666666666,
       "scanMs": {
-        "median": 7.099999999627471,
-        "p95": 15.5,
-        "max": 59.29999999888241
+        "median": 7.300000000745058,
+        "p95": 14.800000000745058,
+        "max": 48.30000000074506
       }
     },
     "evaluation": {
@@ -54,9 +54,9 @@
       "benignInterruptionRate": 0,
       "phishingInterruptionRate": 0.5,
       "scanMs": {
-        "median": 6.700000001117587,
-        "p95": 10,
-        "max": 11.299999998882413
+        "median": 6.800000000745058,
+        "p95": 10.099999997764826,
+        "max": 10.399999998509884
       }
     }
   },
@@ -72,7 +72,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 10.199999999254942,
+      "scanMs": 7.300000000745058,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -86,7 +86,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.099999999627471,
+      "scanMs": 5.300000000745058,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -100,7 +100,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.399999998509884,
+      "scanMs": 5.200000002980232,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -114,7 +114,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5,
+      "scanMs": 6.099999997764826,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -128,7 +128,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.400000000372529,
+      "scanMs": 9.299999997019768,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -142,7 +142,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 9.700000001117587,
+      "scanMs": 5.300000000745058,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -156,7 +156,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.200000001117587,
+      "scanMs": 5.699999999254942,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -170,7 +170,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.200000001117587,
+      "scanMs": 5.199999999254942,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -184,7 +184,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.5,
+      "scanMs": 5.100000001490116,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -198,7 +198,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.299999998882413,
+      "scanMs": 8.899999998509884,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -212,7 +212,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.299999998882413,
+      "scanMs": 5.699999999254942,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -226,7 +226,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.799999998882413,
+      "scanMs": 6.800000000745058,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -240,7 +240,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 9.799999998882413,
+      "scanMs": 5.800000000745058,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -254,7 +254,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.400000000372529,
+      "scanMs": 9.5,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -268,7 +268,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.399999998509884,
+      "scanMs": 5.600000001490116,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -282,7 +282,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.300000000745058,
+      "scanMs": 5.399999998509884,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -296,7 +296,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 8.799999998882413,
+      "scanMs": 5.399999998509884,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -310,7 +310,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 9.5,
+      "scanMs": 5.699999999254942,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -324,7 +324,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.800000000745058,
+      "scanMs": 7.600000001490116,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -338,7 +338,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 8.800000000745058,
+      "scanMs": 4.899999998509884,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -354,7 +354,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 59.29999999888241,
+      "scanMs": 48.30000000074506,
       "signalIds": [
         "brand-mention"
       ]
@@ -380,7 +380,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 3.699999999254942,
+      "scanMs": 3.7000000029802322,
       "signalIds": [
         "brand-mention"
       ]
@@ -393,7 +393,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 3.899999998509884,
+      "scanMs": 4.200000002980232,
       "signalIds": [
         "brand-mention"
       ]
@@ -406,7 +406,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.5,
+      "scanMs": 4.600000001490116,
       "signalIds": [
         "brand-mention"
       ]
@@ -419,7 +419,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.5,
+      "scanMs": 8.100000001490116,
       "signalIds": [
         "brand-mention"
       ]
@@ -432,7 +432,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.100000001490116,
+      "scanMs": 4.200000002980232,
       "signalIds": [
         "brand-mention"
       ]
@@ -445,7 +445,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.299999998882413,
+      "scanMs": 4.399999998509884,
       "signalIds": [
         "brand-mention"
       ]
@@ -458,7 +458,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 3.900000000372529,
+      "scanMs": 4.300000000745058,
       "signalIds": [
         "brand-mention"
       ]
@@ -471,7 +471,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 3.800000000745058,
+      "scanMs": 4.400000002235174,
       "signalIds": [
         "brand-mention"
       ]
@@ -484,7 +484,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4,
+      "scanMs": 4.300000000745058,
       "signalIds": [
         "brand-mention"
       ]
@@ -497,7 +497,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.199999999254942,
+      "scanMs": 5.5,
       "signalIds": [
         "brand-mention"
       ]
@@ -510,7 +510,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 3.799999998882413,
+      "scanMs": 3.899999998509884,
       "signalIds": [
         "brand-mention"
       ]
@@ -523,7 +523,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8,
+      "scanMs": 8.399999998509884,
       "signalIds": [
         "brand-mention"
       ]
@@ -536,7 +536,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.099999999627471,
+      "scanMs": 7.800000000745058,
       "signalIds": [
         "brand-mention"
       ]
@@ -549,7 +549,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 3.900000000372529,
+      "scanMs": 4.100000001490116,
       "signalIds": [
         "brand-mention"
       ]
@@ -562,7 +562,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.300000000745058,
+      "scanMs": 4.399999998509884,
       "signalIds": [
         "brand-mention"
       ]
@@ -575,7 +575,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.099999999627471,
+      "scanMs": 4.099999997764826,
       "signalIds": [
         "brand-mention"
       ]
@@ -588,7 +588,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 7.700000001117587,
+      "scanMs": 6.199999999254942,
       "signalIds": [
         "brand-mention"
       ]
@@ -601,7 +601,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.200000001117587,
+      "scanMs": 8.5,
       "signalIds": [
         "brand-mention"
       ]
@@ -614,7 +614,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 44.30000000074506,
+      "scanMs": 44.400000002235174,
       "signalIds": [
         "credential-presence"
       ]
@@ -627,7 +627,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.600000001490116,
+      "scanMs": 5,
       "signalIds": [
         "credential-presence"
       ]
@@ -640,7 +640,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.099999999627471,
+      "scanMs": 4.900000002235174,
       "signalIds": [
         "credential-presence"
       ]
@@ -653,7 +653,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.200000001117587,
+      "scanMs": 9.300000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -666,7 +666,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.899999998509884,
+      "scanMs": 6.399999998509884,
       "signalIds": [
         "credential-presence"
       ]
@@ -679,7 +679,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.5,
+      "scanMs": 6.100000001490116,
       "signalIds": [
         "credential-presence"
       ]
@@ -692,7 +692,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.100000001490116,
+      "scanMs": 5.400000002235174,
       "signalIds": [
         "credential-presence"
       ]
@@ -705,7 +705,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9.599999999627471,
+      "scanMs": 5.399999998509884,
       "signalIds": [
         "credential-presence"
       ]
@@ -718,7 +718,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.299999998882413,
+      "scanMs": 9.300000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -731,7 +731,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.299999998882413,
+      "scanMs": 8.699999999254942,
       "signalIds": [
         "credential-presence"
       ]
@@ -744,7 +744,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.599999999627471,
+      "scanMs": 5.099999997764826,
       "signalIds": [
         "credential-presence"
       ]
@@ -757,7 +757,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 7.200000001117587,
+      "scanMs": 9,
       "signalIds": [
         "credential-presence"
       ]
@@ -770,7 +770,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.200000001117587,
+      "scanMs": 5.100000001490116,
       "signalIds": [
         "credential-presence"
       ]
@@ -783,7 +783,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.400000000372529,
+      "scanMs": 5.399999998509884,
       "signalIds": [
         "credential-presence"
       ]
@@ -796,7 +796,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.799999998882413,
+      "scanMs": 5.5,
       "signalIds": [
         "credential-presence"
       ]
@@ -809,7 +809,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.199999999254942,
+      "scanMs": 5.100000001490116,
       "signalIds": [
         "credential-presence"
       ]
@@ -822,7 +822,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.400000000372529,
+      "scanMs": 5.300000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -835,7 +835,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9.900000000372529,
+      "scanMs": 5.600000001490116,
       "signalIds": [
         "credential-presence"
       ]
@@ -848,7 +848,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.700000001117587,
+      "scanMs": 6.700000002980232,
       "signalIds": [
         "credential-presence"
       ]
@@ -861,7 +861,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.700000001117587,
+      "scanMs": 5.300000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -874,7 +874,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 10.199999999254942,
+      "scanMs": 7.300000000745058,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -888,7 +888,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.099999999627471,
+      "scanMs": 5.300000000745058,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -902,7 +902,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.399999998509884,
+      "scanMs": 5.200000002980232,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -916,7 +916,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5,
+      "scanMs": 6.099999997764826,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -930,7 +930,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.400000000372529,
+      "scanMs": 9.299999997019768,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -944,7 +944,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 9.700000001117587,
+      "scanMs": 5.300000000745058,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -958,7 +958,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.200000001117587,
+      "scanMs": 5.699999999254942,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -972,7 +972,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.200000001117587,
+      "scanMs": 5.199999999254942,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -986,7 +986,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.5,
+      "scanMs": 5.100000001490116,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -1000,7 +1000,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.299999998882413,
+      "scanMs": 8.899999998509884,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -1014,7 +1014,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.299999998882413,
+      "scanMs": 5.699999999254942,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -1028,7 +1028,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.799999998882413,
+      "scanMs": 6.800000000745058,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -1042,7 +1042,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 9.799999998882413,
+      "scanMs": 5.800000000745058,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -1056,7 +1056,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.400000000372529,
+      "scanMs": 9.5,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -1070,7 +1070,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.399999998509884,
+      "scanMs": 5.600000001490116,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -1084,7 +1084,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 5.300000000745058,
+      "scanMs": 5.399999998509884,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -1098,7 +1098,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 8.799999998882413,
+      "scanMs": 5.399999998509884,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -1112,7 +1112,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 9.5,
+      "scanMs": 5.699999999254942,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -1126,7 +1126,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.800000000745058,
+      "scanMs": 7.600000001490116,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -1140,7 +1140,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 8.800000000745058,
+      "scanMs": 4.899999998509884,
       "signalIds": [
         "cross-origin-credential-form",
         "credential-presence"
@@ -1154,7 +1154,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9.300000000745058,
+      "scanMs": 6.099999997764826,
       "signalIds": []
     },
     {
@@ -1165,7 +1165,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.400000000372529,
+      "scanMs": 9.300000000745058,
       "signalIds": []
     },
     {
@@ -1176,7 +1176,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.300000000745058,
+      "scanMs": 6.5,
       "signalIds": []
     },
     {
@@ -1187,7 +1187,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.299999998882413,
+      "scanMs": 7,
       "signalIds": []
     },
     {
@@ -1198,7 +1198,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8,
+      "scanMs": 6,
       "signalIds": []
     },
     {
@@ -1209,7 +1209,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.099999999627471,
+      "scanMs": 8.700000002980232,
       "signalIds": []
     },
     {
@@ -1220,7 +1220,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9.5,
+      "scanMs": 6.5,
       "signalIds": []
     },
     {
@@ -1231,7 +1231,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.700000001117587,
+      "scanMs": 6.699999999254942,
       "signalIds": []
     },
     {
@@ -1242,7 +1242,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.800000000745058,
+      "scanMs": 8.199999999254942,
       "signalIds": []
     },
     {
@@ -1253,7 +1253,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.199999999254942,
+      "scanMs": 9.099999997764826,
       "signalIds": []
     },
     {
@@ -1264,7 +1264,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.900000000372529,
+      "scanMs": 6.699999999254942,
       "signalIds": []
     },
     {
@@ -1275,7 +1275,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.900000000372529,
+      "scanMs": 6.100000001490116,
       "signalIds": []
     },
     {
@@ -1286,7 +1286,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.900000000372529,
+      "scanMs": 6.099999997764826,
       "signalIds": []
     },
     {
@@ -1297,7 +1297,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 7.800000000745058,
+      "scanMs": 6.199999999254942,
       "signalIds": []
     },
     {
@@ -1308,7 +1308,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.699999999254942,
+      "scanMs": 8.900000002235174,
       "signalIds": []
     },
     {
@@ -1319,7 +1319,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9.099999999627471,
+      "scanMs": 9.099999997764826,
       "signalIds": []
     },
     {
@@ -1330,7 +1330,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.299999998882413,
+      "scanMs": 6.100000001490116,
       "signalIds": []
     },
     {
@@ -1341,7 +1341,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.800000000745058,
+      "scanMs": 6.599999997764826,
       "signalIds": []
     },
     {
@@ -1352,7 +1352,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.800000000745058,
+      "scanMs": 6.399999998509884,
       "signalIds": []
     },
     {
@@ -1363,7 +1363,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.900000000372529,
+      "scanMs": 6.399999998509884,
       "signalIds": []
     },
     {
@@ -1374,7 +1374,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 18.199999999254942,
+      "scanMs": 15.599999997764826,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1389,7 +1389,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 16.300000000745058,
+      "scanMs": 14.300000000745058,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1404,7 +1404,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 12.900000000372529,
+      "scanMs": 13.199999999254942,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1419,7 +1419,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 12.699999999254942,
+      "scanMs": 13.600000001490116,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1434,7 +1434,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 13,
+      "scanMs": 14.800000000745058,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1449,7 +1449,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 14.899999998509884,
+      "scanMs": 12.600000001490116,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1464,7 +1464,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 15.5,
+      "scanMs": 15.699999999254942,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1479,7 +1479,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 14.900000000372529,
+      "scanMs": 15.599999997764826,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1494,7 +1494,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 12.599999999627471,
+      "scanMs": 13.300000000745058,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1509,7 +1509,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 12.300000000745058,
+      "scanMs": 13.900000002235174,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1524,7 +1524,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 14.900000000372529,
+      "scanMs": 13.300000000745058,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1539,7 +1539,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 13,
+      "scanMs": 14.800000000745058,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1554,7 +1554,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 12.300000000745058,
+      "scanMs": 15.899999998509884,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1569,7 +1569,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 16.199999999254942,
+      "scanMs": 12.899999998509884,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1584,7 +1584,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 13,
+      "scanMs": 12.800000000745058,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1599,7 +1599,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 12.799999998882413,
+      "scanMs": 13.600000001490116,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1614,7 +1614,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 13.099999999627471,
+      "scanMs": 14.099999997764826,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1629,7 +1629,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 15.5,
+      "scanMs": 13.900000002235174,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1644,7 +1644,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 15.800000000745058,
+      "scanMs": 13.399999998509884,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1659,7 +1659,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 12.600000001490116,
+      "scanMs": 15.599999997764826,
       "signalIds": [
         "credential-presence",
         "hidden-cross-origin-iframe",
@@ -1674,7 +1674,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.900000000372529,
+      "scanMs": 5.899999998509884,
       "signalIds": [
         "brand-mention"
       ]
@@ -1687,7 +1687,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.199999999254942,
+      "scanMs": 9.300000000745058,
       "signalIds": [
         "brand-mention"
       ]
@@ -1713,7 +1713,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.200000001117587,
+      "scanMs": 4.200000002980232,
       "signalIds": [
         "brand-mention"
       ]
@@ -1726,7 +1726,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.5,
+      "scanMs": 7.800000000745058,
       "signalIds": [
         "brand-mention"
       ]
@@ -1739,7 +1739,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.099999999627471,
+      "scanMs": 4.100000001490116,
       "signalIds": [
         "brand-mention"
       ]
@@ -1752,7 +1752,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 3.900000000372529,
+      "scanMs": 4.199999999254942,
       "signalIds": [
         "brand-mention"
       ]
@@ -1765,7 +1765,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.400000000372529,
+      "scanMs": 4.400000002235174,
       "signalIds": [
         "brand-mention"
       ]
@@ -1778,7 +1778,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.400000000372529,
+      "scanMs": 4.399999998509884,
       "signalIds": [
         "brand-mention"
       ]
@@ -1791,7 +1791,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.300000000745058,
+      "scanMs": 4.299999997019768,
       "signalIds": [
         "brand-mention"
       ]
@@ -1804,7 +1804,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.599999999627471,
+      "scanMs": 4.5,
       "signalIds": [
         "brand-mention"
       ]
@@ -1817,7 +1817,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.300000000745058,
+      "scanMs": 8.199999999254942,
       "signalIds": [
         "brand-mention"
       ]
@@ -1830,7 +1830,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.800000000745058,
+      "scanMs": 4.100000001490116,
       "signalIds": [
         "brand-mention"
       ]
@@ -1843,7 +1843,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.599999999627471,
+      "scanMs": 7.900000002235174,
       "signalIds": [
         "brand-mention"
       ]
@@ -1856,7 +1856,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4,
+      "scanMs": 7.699999999254942,
       "signalIds": [
         "brand-mention"
       ]
@@ -1869,7 +1869,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5,
+      "scanMs": 7.700000002980232,
       "signalIds": [
         "brand-mention"
       ]
@@ -1882,7 +1882,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.299999998882413,
+      "scanMs": 4.399999998509884,
       "signalIds": [
         "brand-mention"
       ]
@@ -1895,7 +1895,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8,
+      "scanMs": 8.399999998509884,
       "signalIds": [
         "brand-mention"
       ]
@@ -1908,7 +1908,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.200000001117587,
+      "scanMs": 8.099999997764826,
       "signalIds": [
         "brand-mention"
       ]
@@ -1921,7 +1921,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.099999999627471,
+      "scanMs": 4.799999997019768,
       "signalIds": [
         "brand-mention"
       ]
@@ -1934,7 +1934,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9.199999999254942,
+      "scanMs": 5.899999998509884,
       "signalIds": [
         "executable-download-link"
       ]
@@ -1973,7 +1973,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.099999999627471,
+      "scanMs": 4.199999999254942,
       "signalIds": [
         "executable-download-link"
       ]
@@ -1986,7 +1986,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5,
+      "scanMs": 5.800000000745058,
       "signalIds": [
         "executable-download-link"
       ]
@@ -1999,7 +1999,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.599999999627471,
+      "scanMs": 4.800000000745058,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2012,7 +2012,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.5,
+      "scanMs": 4.199999999254942,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2025,7 +2025,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.800000000745058,
+      "scanMs": 4.399999998509884,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2038,7 +2038,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.400000000372529,
+      "scanMs": 4,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2051,7 +2051,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.400000000372529,
+      "scanMs": 4.5,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2064,7 +2064,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.199999999254942,
+      "scanMs": 5.5,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2077,7 +2077,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.599999999627471,
+      "scanMs": 6.099999997764826,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2090,7 +2090,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.299999998882413,
+      "scanMs": 4.5,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2103,7 +2103,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.099999999627471,
+      "scanMs": 4.100000001490116,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2116,7 +2116,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 7.900000000372529,
+      "scanMs": 7.899999998509884,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2129,7 +2129,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.099999999627471,
+      "scanMs": 4.299999997019768,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2142,7 +2142,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.099999999627471,
+      "scanMs": 4.399999998509884,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2155,7 +2155,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.100000001490116,
+      "scanMs": 7.5,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2168,7 +2168,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.400000000372529,
+      "scanMs": 8.5,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2181,7 +2181,7 @@
       "score": 0,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.599999999627471,
+      "scanMs": 4.200000002980232,
       "signalIds": [
         "executable-download-link"
       ]
@@ -2194,7 +2194,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 7.199999999254942,
+      "scanMs": 10.300000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -2207,7 +2207,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5,
+      "scanMs": 6.300000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -2220,7 +2220,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.199999999254942,
+      "scanMs": 5.300000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -2233,7 +2233,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.300000000745058,
+      "scanMs": 6.400000002235174,
       "signalIds": [
         "credential-presence"
       ]
@@ -2246,7 +2246,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.700000001117587,
+      "scanMs": 7.600000001490116,
       "signalIds": [
         "credential-presence"
       ]
@@ -2259,7 +2259,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.400000000372529,
+      "scanMs": 9.199999999254942,
       "signalIds": [
         "credential-presence"
       ]
@@ -2272,7 +2272,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.200000001117587,
+      "scanMs": 5.899999998509884,
       "signalIds": [
         "credential-presence"
       ]
@@ -2285,7 +2285,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.599999999627471,
+      "scanMs": 6,
       "signalIds": [
         "credential-presence"
       ]
@@ -2298,7 +2298,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.099999999627471,
+      "scanMs": 9.699999999254942,
       "signalIds": [
         "credential-presence"
       ]
@@ -2311,7 +2311,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.599999999627471,
+      "scanMs": 5.800000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -2324,7 +2324,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.400000000372529,
+      "scanMs": 6.100000001490116,
       "signalIds": [
         "credential-presence"
       ]
@@ -2337,7 +2337,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9.5,
+      "scanMs": 7.699999999254942,
       "signalIds": [
         "credential-presence"
       ]
@@ -2350,7 +2350,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.100000001490116,
+      "scanMs": 5.599999997764826,
       "signalIds": [
         "credential-presence"
       ]
@@ -2363,7 +2363,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9,
+      "scanMs": 9.600000001490116,
       "signalIds": [
         "credential-presence"
       ]
@@ -2376,7 +2376,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.799999998882413,
+      "scanMs": 6.900000002235174,
       "signalIds": [
         "credential-presence"
       ]
@@ -2402,7 +2402,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.299999998882413,
+      "scanMs": 5.5,
       "signalIds": [
         "credential-presence"
       ]
@@ -2415,7 +2415,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.199999999254942,
+      "scanMs": 8.699999999254942,
       "signalIds": [
         "credential-presence"
       ]
@@ -2428,7 +2428,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 7.5,
+      "scanMs": 7.800000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -2441,7 +2441,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.099999999627471,
+      "scanMs": 5.599999997764826,
       "signalIds": [
         "credential-presence"
       ]
@@ -2454,7 +2454,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9.900000000372529,
+      "scanMs": 9.900000002235174,
       "signalIds": [
         "credential-presence"
       ]
@@ -2467,7 +2467,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9.300000000745058,
+      "scanMs": 5.600000001490116,
       "signalIds": [
         "credential-presence"
       ]
@@ -2480,7 +2480,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.099999999627471,
+      "scanMs": 5.900000002235174,
       "signalIds": [
         "credential-presence"
       ]
@@ -2493,7 +2493,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.599999999627471,
+      "scanMs": 5.700000002980232,
       "signalIds": [
         "credential-presence"
       ]
@@ -2506,7 +2506,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.199999999254942,
+      "scanMs": 7.199999999254942,
       "signalIds": [
         "credential-presence"
       ]
@@ -2519,7 +2519,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.900000000372529,
+      "scanMs": 10.399999998509884,
       "signalIds": [
         "credential-presence"
       ]
@@ -2532,7 +2532,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.900000000372529,
+      "scanMs": 5.699999999254942,
       "signalIds": [
         "credential-presence"
       ]
@@ -2545,7 +2545,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9.800000000745058,
+      "scanMs": 5,
       "signalIds": [
         "credential-presence"
       ]
@@ -2558,7 +2558,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9.300000000745058,
+      "scanMs": 4.899999998509884,
       "signalIds": [
         "credential-presence"
       ]
@@ -2571,7 +2571,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8,
+      "scanMs": 5.5,
       "signalIds": [
         "credential-presence"
       ]
@@ -2584,7 +2584,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.800000000745058,
+      "scanMs": 5.899999998509884,
       "signalIds": [
         "credential-presence"
       ]
@@ -2597,7 +2597,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.5,
+      "scanMs": 6.699999999254942,
       "signalIds": [
         "credential-presence"
       ]
@@ -2610,7 +2610,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.700000001117587,
+      "scanMs": 5.300000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -2623,7 +2623,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.299999998882413,
+      "scanMs": 5.399999998509884,
       "signalIds": [
         "credential-presence"
       ]
@@ -2636,7 +2636,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.5,
+      "scanMs": 9.600000001490116,
       "signalIds": [
         "credential-presence"
       ]
@@ -2649,7 +2649,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.599999999627471,
+      "scanMs": 5.199999999254942,
       "signalIds": [
         "credential-presence"
       ]
@@ -2662,7 +2662,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.700000001117587,
+      "scanMs": 5.5,
       "signalIds": [
         "credential-presence"
       ]
@@ -2675,7 +2675,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.300000000745058,
+      "scanMs": 6.100000001490116,
       "signalIds": [
         "credential-presence"
       ]
@@ -2688,7 +2688,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 7.900000000372529,
+      "scanMs": 7.5,
       "signalIds": [
         "credential-presence"
       ]
@@ -2701,7 +2701,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.199999999254942,
+      "scanMs": 5.5,
       "signalIds": [
         "credential-presence"
       ]
@@ -2714,7 +2714,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 7.199999999254942,
+      "scanMs": 7.099999997764826,
       "signalIds": [
         "credential-presence"
       ]
@@ -2727,7 +2727,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 4.900000000372529,
+      "scanMs": 5.5,
       "signalIds": [
         "credential-presence"
       ]
@@ -2740,7 +2740,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.800000000745058,
+      "scanMs": 5.900000002235174,
       "signalIds": [
         "credential-presence"
       ]
@@ -2753,7 +2753,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.099999999627471,
+      "scanMs": 5,
       "signalIds": [
         "credential-presence"
       ]
@@ -2766,7 +2766,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.700000001117587,
+      "scanMs": 7.100000001490116,
       "signalIds": [
         "credential-presence"
       ]
@@ -2779,7 +2779,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.200000001117587,
+      "scanMs": 6.300000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -2792,7 +2792,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.200000001117587,
+      "scanMs": 6,
       "signalIds": [
         "credential-presence"
       ]
@@ -2805,7 +2805,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9.099999999627471,
+      "scanMs": 7.300000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -2818,7 +2818,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.399999998509884,
+      "scanMs": 5.899999998509884,
       "signalIds": [
         "credential-presence"
       ]
@@ -2831,7 +2831,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.199999999254942,
+      "scanMs": 5.5,
       "signalIds": [
         "credential-presence"
       ]
@@ -2844,7 +2844,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.300000000745058,
+      "scanMs": 6.5,
       "signalIds": [
         "credential-presence"
       ]
@@ -2857,7 +2857,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 7.299999998882413,
+      "scanMs": 7.600000001490116,
       "signalIds": [
         "credential-presence"
       ]
@@ -2870,7 +2870,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 9,
+      "scanMs": 5.400000002235174,
       "signalIds": [
         "credential-presence"
       ]
@@ -2883,7 +2883,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.800000000745058,
+      "scanMs": 5.5,
       "signalIds": [
         "credential-presence"
       ]
@@ -2896,7 +2896,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.300000000745058,
+      "scanMs": 9.099999997764826,
       "signalIds": [
         "credential-presence"
       ]
@@ -2909,7 +2909,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.800000000745058,
+      "scanMs": 9.400000002235174,
       "signalIds": [
         "credential-presence"
       ]
@@ -2922,7 +2922,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 5.199999999254942,
+      "scanMs": 4.899999998509884,
       "signalIds": [
         "credential-presence"
       ]
@@ -2935,7 +2935,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.5,
+      "scanMs": 5.299999997019768,
       "signalIds": [
         "credential-presence"
       ]
@@ -2948,7 +2948,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 6.900000000372529,
+      "scanMs": 6.800000000745058,
       "signalIds": [
         "credential-presence"
       ]
@@ -2961,7 +2961,7 @@
       "score": 15,
       "level": "LOW",
       "interrupted": false,
-      "scanMs": 8.800000000745058,
+      "scanMs": 7.599999997764826,
       "signalIds": [
         "credential-presence"
       ]
@@ -2974,7 +2974,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 6.900000000372529,
+      "scanMs": 7.100000001490116,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -2989,7 +2989,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 9.599999999627471,
+      "scanMs": 7.199999999254942,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3004,7 +3004,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.199999999254942,
+      "scanMs": 8.300000000745058,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3019,7 +3019,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.200000001117587,
+      "scanMs": 8.399999998509884,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3034,7 +3034,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.099999999627471,
+      "scanMs": 7.300000000745058,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3049,7 +3049,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 6.899999998509884,
+      "scanMs": 8.899999998509884,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3064,7 +3064,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 10.300000000745058,
+      "scanMs": 9.799999997019768,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3079,7 +3079,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.300000000745058,
+      "scanMs": 7.100000001490116,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3094,7 +3094,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.099999999627471,
+      "scanMs": 7.5,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3109,7 +3109,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.099999999627471,
+      "scanMs": 7.100000001490116,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3124,7 +3124,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.099999999627471,
+      "scanMs": 9.399999998509884,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3139,7 +3139,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.099999999627471,
+      "scanMs": 7.5,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3154,7 +3154,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.299999998882413,
+      "scanMs": 7.5,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3169,7 +3169,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 9.400000000372529,
+      "scanMs": 8.199999999254942,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3184,7 +3184,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7,
+      "scanMs": 7.300000000745058,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3199,7 +3199,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 10.299999998882413,
+      "scanMs": 8.699999999254942,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3214,7 +3214,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.200000001117587,
+      "scanMs": 7.5,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3229,7 +3229,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7,
+      "scanMs": 7.599999997764826,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3244,7 +3244,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.200000001117587,
+      "scanMs": 7.300000000745058,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3259,7 +3259,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.699999999254942,
+      "scanMs": 6.900000002235174,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3274,7 +3274,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 10.400000000372529,
+      "scanMs": 7.400000002235174,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3289,7 +3289,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.199999999254942,
+      "scanMs": 6.899999998509884,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3319,7 +3319,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 8,
+      "scanMs": 7.099999997764826,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3334,7 +3334,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.099999999627471,
+      "scanMs": 9.600000001490116,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3349,7 +3349,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.399999998509884,
+      "scanMs": 8.300000000745058,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3364,7 +3364,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 9.5,
+      "scanMs": 6.900000002235174,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3379,7 +3379,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.200000001117587,
+      "scanMs": 10.5,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3394,7 +3394,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 9.700000001117587,
+      "scanMs": 7,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3409,7 +3409,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 9,
+      "scanMs": 7,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3424,7 +3424,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.300000000745058,
+      "scanMs": 8.5,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3439,7 +3439,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 8.5,
+      "scanMs": 7,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3454,7 +3454,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 10.599999999627471,
+      "scanMs": 10.5,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3469,7 +3469,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 8.700000001117587,
+      "scanMs": 8.199999999254942,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3484,7 +3484,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 8.200000001117587,
+      "scanMs": 9.099999997764826,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3499,7 +3499,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 11,
+      "scanMs": 10.099999997764826,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3514,7 +3514,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.700000001117587,
+      "scanMs": 8,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3529,7 +3529,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 9.300000000745058,
+      "scanMs": 6.900000002235174,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3544,7 +3544,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 8.699999999254942,
+      "scanMs": 9.600000001490116,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3559,7 +3559,7 @@
       "score": 55,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 8.100000001490116,
+      "scanMs": 7.200000002980232,
       "signalIds": [
         "typosquat-domain",
         "brand-name-domain-mismatch",
@@ -3574,7 +3574,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.200000001117587,
+      "scanMs": 8.5,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3589,7 +3589,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.099999999627471,
+      "scanMs": 6.899999998509884,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3604,7 +3604,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.699999999254942,
+      "scanMs": 7.099999997764826,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3619,7 +3619,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.800000000745058,
+      "scanMs": 8.100000001490116,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3634,7 +3634,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.900000000372529,
+      "scanMs": 7.400000002235174,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3649,7 +3649,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.099999999627471,
+      "scanMs": 6.900000002235174,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3664,7 +3664,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.099999999627471,
+      "scanMs": 9.200000002980232,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3679,7 +3679,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7,
+      "scanMs": 6.799999997019768,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3694,7 +3694,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.799999998882413,
+      "scanMs": 7.399999998509884,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3709,7 +3709,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.799999998882413,
+      "scanMs": 10.099999997764826,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3724,7 +3724,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.300000000745058,
+      "scanMs": 9.5,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3739,7 +3739,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.599999999627471,
+      "scanMs": 8.800000000745058,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3754,7 +3754,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.899999998509884,
+      "scanMs": 9.899999998509884,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3769,7 +3769,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.799999998882413,
+      "scanMs": 9.699999999254942,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3784,7 +3784,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.899999998509884,
+      "scanMs": 7.100000001490116,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3799,7 +3799,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.699999999254942,
+      "scanMs": 10,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3814,7 +3814,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.699999999254942,
+      "scanMs": 7.400000002235174,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3829,7 +3829,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 11.300000000745058,
+      "scanMs": 7.800000000745058,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3844,7 +3844,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7,
+      "scanMs": 9.599999997764826,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3859,7 +3859,7 @@
       "score": 50,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.900000000372529,
+      "scanMs": 7,
       "signalIds": [
         "brand-in-subdomain",
         "brand-name-domain-mismatch",
@@ -3874,7 +3874,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 8.599999999627471,
+      "scanMs": 7.699999999254942,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3889,7 +3889,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 9.699999999254942,
+      "scanMs": 9.399999998509884,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3904,7 +3904,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 10,
+      "scanMs": 10.199999999254942,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3919,7 +3919,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 8,
+      "scanMs": 10.100000001490116,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3934,7 +3934,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 9.199999999254942,
+      "scanMs": 9.700000002980232,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3949,7 +3949,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.599999999627471,
+      "scanMs": 8.099999997764826,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3964,7 +3964,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 10.199999999254942,
+      "scanMs": 8.5,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3979,7 +3979,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.599999999627471,
+      "scanMs": 8,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -3994,7 +3994,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 10.400000000372529,
+      "scanMs": 9.5,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -4009,7 +4009,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 11.299999998882413,
+      "scanMs": 8,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -4024,7 +4024,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 8.199999999254942,
+      "scanMs": 8.300000000745058,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -4039,7 +4039,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 9.799999998882413,
+      "scanMs": 7.900000002235174,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -4054,7 +4054,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.900000000372529,
+      "scanMs": 7.800000000745058,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -4069,7 +4069,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 7.699999999254942,
+      "scanMs": 9.699999999254942,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -4084,7 +4084,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 8.800000000745058,
+      "scanMs": 8,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -4099,7 +4099,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 8.800000000745058,
+      "scanMs": 10,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -4114,7 +4114,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 9.299999998882413,
+      "scanMs": 9.399999998509884,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -4129,7 +4129,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 10.599999999627471,
+      "scanMs": 8.699999999254942,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -4144,7 +4144,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 10.800000000745058,
+      "scanMs": 7.700000002980232,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -4159,7 +4159,7 @@
       "score": 60,
       "level": "HIGH",
       "interrupted": true,
-      "scanMs": 8.699999999254942,
+      "scanMs": 10.099999997764826,
       "signalIds": [
         "homograph-domain",
         "brand-name-domain-mismatch",
@@ -4174,7 +4174,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.5,
+      "scanMs": 9.600000001490116,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4188,7 +4188,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.399999998509884,
+      "scanMs": 9.5,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4202,7 +4202,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.5,
+      "scanMs": 6.699999999254942,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4216,7 +4216,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.400000000372529,
+      "scanMs": 9,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4230,7 +4230,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.900000000372529,
+      "scanMs": 6.600000001490116,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4244,7 +4244,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 9.799999998882413,
+      "scanMs": 10.100000001490116,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4258,7 +4258,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.400000000372529,
+      "scanMs": 9.699999999254942,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4272,7 +4272,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 10.300000000745058,
+      "scanMs": 9.099999997764826,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4286,7 +4286,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.700000001117587,
+      "scanMs": 6.5,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4300,7 +4300,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.800000000745058,
+      "scanMs": 7.600000001490116,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4314,7 +4314,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.099999999627471,
+      "scanMs": 7,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4328,7 +4328,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 9,
+      "scanMs": 8.600000001490116,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4342,7 +4342,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 9.200000001117587,
+      "scanMs": 9.400000002235174,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4356,7 +4356,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.700000001117587,
+      "scanMs": 10.199999999254942,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4370,7 +4370,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 8.800000000745058,
+      "scanMs": 9.100000001490116,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4384,7 +4384,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 9.599999999627471,
+      "scanMs": 7,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4398,7 +4398,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.700000001117587,
+      "scanMs": 6.599999997764826,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4412,7 +4412,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 6.5,
+      "scanMs": 7.199999999254942,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4426,7 +4426,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 7.400000000372529,
+      "scanMs": 8.099999997764826,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"
@@ -4440,7 +4440,7 @@
       "score": 45,
       "level": "MEDIUM",
       "interrupted": false,
-      "scanMs": 8.400000000372529,
+      "scanMs": 6.900000002235174,
       "signalIds": [
         "brand-name-domain-mismatch",
         "credential-presence"

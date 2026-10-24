@@ -43,7 +43,23 @@ Trust is exact-origin, including scheme and port. Trusting a top-level origin pa
 
 Legacy allowlists and protected domains are validated and normalized; rejected entries appear in migration notices. Legacy AI enablement is reset once during migration so users can review the advisory-only behavior. Local storage is restricted to trusted extension contexts. Content scripts request only public trust and protected-domain configuration; they cannot read the API key.
 
-Only storage and webNavigation permissions are required. Static content scripts still run on http(s) pages for automatic protection. Optional host access is limited to api.x.ai and HTTP localhost/127.0.0.1 model endpoints. There is no background all-sites fetch permission.
+Required permissions are storage, webNavigation, and alarms. Alarms expire shared-threat warnings even when the worker sleeps. Static content scripts still run on http(s) pages for automatic protection. Optional host declarations cover api.x.ai, HTTP localhost/127.0.0.1 model endpoints, and Workers.dev beta services. Cloud access is requested only for the exact configured HTTPS Workers origin; none is granted by default. There is no background all-sites fetch permission.
+
+## Shared threat memory beta
+
+The extension now includes optional shared reputation, explicit reports, and managed-AI controls, all disabled by default. Deployment files are prepared in `backend/`; no hosted service or invitation is preconfigured. Local heuristics and submission decisions remain independent of reputation and AI. See `backend/README.md` for Cloudflare Free deployment, administration and local test commands; see `PRIVACY.md` or the bundled privacy page for consent and retention details.
+
+Lookups use the hostname and SHA-256 hash of the exact browser-normalized address, preserving its query and excluding its fragment. Only an explicitly confirmed report sends the raw displayed address for human review. Reviewed threats can match an exact link or an explicitly approved exact hostname; they do not expand to parent domains, other paths, subdomains, or hosted tenants. A hostname record intentionally covers that reviewed hostname's paths. Confirmed records expire within 24 hours and clients require refresh within 15 minutes. Unknown or unavailable records are never safe verdicts.
+
+A confirmed match produces a separate popup/badge/page warning as navigation opens; page loading is not blocked. It adds no heuristic points and cannot trigger or authorize the submission guard. Only the top document is checked by shared reputation in this beta; local analysis still covers embedded frames. Automatic cloud traffic excludes trusted origins, incognito, local/private addresses and intranet names. Public hostnames that point to private services require the user's trust setting; the client does not resolve them.
+
+Threat, advice and capability caches share a persistent 3 MiB/5,000-entry limit, with expiry and least-recently-used eviction. Clear them in Settings without removing preferences or credentials. AI advice keys include normalized evidence, provider/model, rules, prompt and reviewed-example versions; in-flight and old-document results cannot update a newer page. Personal/local AI configuration is retained, and providers are enabled explicitly rather than falling back automatically.
+
+The invited service uses Workers, D1 and Workers AI, with individual revocable installation tokens. SQL limits each installation to 1,000 lookups, five reports and ten new inferences per UTC day, with 100 inferences globally and 25 active invitations. Duplicate inference reservations are atomic. The client waits at most one second for reputation and three seconds for AI. Exhaustion and outages leave local protection running.
+
+Reports start pending. The administrator CLI requires independent review, scope and evidence to confirm a threat; report counts, model guesses, trust, dismissals and submission overrides never provide ground truth. Raw reports expire after 30 days. Approved minimized examples are versioned and manually curated; changing them invalidates AI approval. No automatic model training occurs.
+
+Managed AI remains behind a closed evaluation gate. `backend/evaluation/reviewed-corpus.json` is deliberately empty: the existing 300 synthetic examples cannot establish independent real-world quality. Intake, collection and comparison tooling is included; at least 200 benign/100 phishing reviewed cases and separate domains/templates are required before approval. AI must add held-out phishing detection without benign concern flags and fit the three-second deadline. It remains advisory even after approval.
 
 ## Experimental AI
 
@@ -81,4 +97,4 @@ Exported semantic cues come only from synthetic held-out fixtures. The exporter 
 - Brand references are finite. Same-site phishing without protected-brand impersonation, unmarked OTP flows, compromised legitimate sites, and new attack styles may be missed.
 - Real-world benign/phishing evaluation, minimum-Chrome-version testing, native prerender/tab replacement, and explicit BFCache activation verification remain release-validation work. The browser suite verifies back navigation and pageshow recovery but does not assert that Chrome used BFCache.
 
-Wallet draining, general malware classification, screenshots/models, reputation services, WHOIS, and network blocklists remain outside this release.
+Wallet draining, general malware classification, screenshot models, WHOIS, public-scale reputation feeds, and network blocking remain outside this release. Shared reputation and managed AI are prepared for an invited free-tier pilot; deployment, independent labels, measured model benefit and public-store privacy contact/disclosures are still required before activation or public distribution.
