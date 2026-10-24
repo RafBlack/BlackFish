@@ -11,7 +11,9 @@
     "test": "node --test --test-concurrency=1 test/*.test.js",
     "admin": "node scripts/admin.mjs",
     "deploy:check": "wrangler deploy --dry-run",
-    "evaluate:reviewed": "node scripts/evaluate-reviewed.mjs evaluation/reviewed-corpus.json"
+    "prepare:deployment": "node scripts/prepare.mjs",
+    "evaluate:reviewed": "node scripts/evaluate-reviewed.mjs evaluation/reviewed-corpus.json",
+    "deploy": "wrangler deploy --config wrangler.local.json"
   },
   "devDependencies": {
     "wrangler": "4.152.0"

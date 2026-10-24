@@ -1,0 +1,10 @@
+{
+  "name": "blackfish-local-test",
+  "main": "test/local-worker.js",
+  "compatibility_date": "2026-10-24",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": { "enabled": false },
+  "vars": { "MANAGED_AI_ENABLED": "true", "EVALUATION_APPROVED": "true", "EVALUATION_EXAMPLES_VERSION": "1", "EVALUATION_CORPUS_SHA": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" },
+  "d1_databases": [{ "binding": "DB", "database_name": "blackfish-local-test", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "migrations" }]
+}
