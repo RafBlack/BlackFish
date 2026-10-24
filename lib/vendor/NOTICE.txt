@@ -1,0 +1,4 @@
+BlackFish bundles tldts (MIT) and Punycode.js (MIT); license notices are retained in built JavaScript.
+Unicode confusables: Unicode 17.0.0, https://www.unicode.org/Public/17.0.0/security/confusables.txt
+Copyright Unicode, Inc. Unicode License v3: https://www.unicode.org/license.txt
+Pinned source, generated mapping, SHA-256, and license: lib/vendor/.
