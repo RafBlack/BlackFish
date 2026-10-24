@@ -1,114 +1,113 @@
-const BF_STYLE = `
-  :host { all: initial; }
-  * { box-sizing: border-box; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
-  .banner {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 2147483647;
-    background: #7a1f1f; color: #fff; padding: 10px 16px;
-    display: flex; align-items: center; gap: 12px; font-size: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.35);
+import { evidenceFingerprint } from '../lib/heuristics/score.js';
+import { createXelu, createMark, xeluMessage } from '../ui/brand.js';
+import { OVERLAY_CSS } from '../ui/overlay-style.js';
+
+export function createOverlay(doc, onTrust) {
+  let host, root, banner, dialog, pendingResolve, previousFocus;
+  let dismissed = '', lastBanner = '', activeKey = '';
+  function node(tag, text, className) {
+    const el = doc.createElement(tag);
+    if (text !== undefined) el.textContent = text;
+    if (className) el.className = className;
+    return el;
   }
-  .banner.medium { background: #8a5a00; }
-  .banner strong { font-weight: 600; }
-  .banner .reasons { opacity: .9; font-size: 13px; }
-  .banner button {
-    margin-left: auto; border: 1px solid rgba(255,255,255,.6); background: transparent;
-    color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 13px; cursor: pointer;
-    white-space: nowrap;
+  function brand() {
+    const lockup = node('div', undefined, 'brand-lockup');
+    lockup.append(createMark(doc), node('span', 'BLACKFISH'));
+    return lockup;
   }
-  .banner button:hover { background: rgba(255,255,255,.15); }
-  .banner button + button { margin-left: 6px; }
-
-  .interstitial {
-    position: fixed; inset: 0; z-index: 2147483647;
-    background: rgba(20,4,4,.96); color: #fff;
-    display: flex; align-items: center; justify-content: center;
+  function mascot(className) {
+    const slot = node('div', undefined, className);
+    slot.setAttribute('aria-hidden', 'true');
+    slot.append(createXelu(doc));
+    return slot;
   }
-  .card {
-    max-width: 520px; padding: 28px 32px; background: #1c1c1c; border-radius: 10px;
-    border: 1px solid #402020;
+  function ensure() {
+    if (!doc.documentElement) return false;
+    if (host?.isConnected) return true;
+    // Never reuse a page-created node or expose the closed root through DOM properties.
+    host = doc.createElement('div');
+    host.dataset.blackfishUi = '';
+    root = host.attachShadow({ mode: 'closed' });
+    root.append(node('style', OVERLAY_CSS));
+    doc.documentElement.append(host);
+    banner = null; dialog = null; lastBanner = '';
+    return true;
   }
-  .card h1 { font-size: 20px; margin: 0 0 8px; color: #ff6b6b; }
-  .card p { font-size: 14px; line-height: 1.5; color: #ddd; margin: 8px 0; }
-  .card ul { font-size: 13px; color: #bbb; padding-left: 18px; margin: 10px 0; }
-  .card .actions { margin-top: 20px; display: flex; gap: 10px; }
-  .card .go-back {
-    background: #2f7d4f; border: none; color: #fff; padding: 10px 16px;
-    border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;
+  function clearBanner() { banner?.remove(); banner = null; lastBanner = ''; }
+  function settle(approved) {
+    const resolve = pendingResolve; pendingResolve = null;
+    dialog?.remove(); dialog = null; activeKey = '';
+    if (previousFocus?.isConnected) previousFocus.focus();
+    resolve?.(approved);
   }
-  .card .proceed {
-    background: transparent; border: 1px solid #555; color: #999; padding: 10px 16px;
-    border-radius: 6px; cursor: pointer; font-size: 13px;
+  function render(scored, state = 'complete') {
+    const key = evidenceFingerprint(scored);
+    if (state === 'trusted' || scored.level === 'LOW') { clearBanner(); return; }
+    if (key === dismissed) return;
+    if (!ensure() || key === lastBanner && banner?.isConnected) return;
+    clearBanner(); lastBanner = key;
+    banner = node('aside', undefined, 'banner');
+    banner.dataset.level = scored.level;
+    banner.setAttribute('role', 'status'); banner.setAttribute('aria-label', 'BlackFish: Xelu phishing warning');
+    const header = node('div', undefined, 'banner-header');
+    header.append(brand(), node('span', 'by xelulabs', 'brand-credit'));
+    const stage = node('div', undefined, 'banner-stage');
+    stage.append(
+      node('div', xeluMessage('complete', scored.level), 'speech-bubble'),
+      mascot('banner-mascot'),
+      node('p', (scored.level === 'HIGH' ? 'HIGH PHISHING RISK' : 'RISK INDICATORS DETECTED') + ' / ' + scored.score + ' OF 100', 'banner-state')
+    );
+    const reasons = node('p', scored.signals.filter(s => s.contribution > 0).slice(0, 2).map(s => s.detail).join(' '), 'banner-reasons');
+    const actions = node('div', undefined, 'banner-actions');
+    const trust = node('button', 'Trust this site', 'trust');
+    trust.addEventListener('click', async e => { if (e.isTrusted) { trust.disabled = true; try { await onTrust(); clear(); } catch { trust.disabled = false; } } });
+    const dismiss = node('button', 'Dismiss', 'dismiss');
+    dismiss.addEventListener('click', () => { dismissed = key; clearBanner(); });
+    actions.append(trust, dismiss); banner.append(header, stage, reasons, actions); root.append(banner);
   }
-`;
-
-function bfGetShadowRoot() {
-  let host = document.getElementById("__blackfish_host__");
-  if (!host) {
-    host = document.createElement("div");
-    host.id = "__blackfish_host__";
-    (document.documentElement || document.body).appendChild(host);
-
-    const shadow = host.attachShadow({ mode: "closed" });
-    const style = document.createElement("style");
-    style.textContent = BF_STYLE;
-    shadow.appendChild(style);
-    host._bfRoot = shadow;
+  function prompt({ key, scored, reason, frameHost }) {
+    if (activeKey === key && pendingResolve) return Promise.resolve(false);
+    settle(false);
+    if (!ensure()) return Promise.resolve(false);
+    activeKey = key;
+    previousFocus = doc.activeElement;
+    dialog = node('div', undefined, 'backdrop');
+    const card = node('section', undefined, 'card');
+    card.setAttribute('role', 'alertdialog'); card.setAttribute('aria-modal', 'true');
+    card.setAttribute('aria-labelledby', 'bf-dialog-title'); card.setAttribute('aria-describedby', 'bf-dialog-description');
+    const header = node('div', undefined, 'card-header');
+    header.append(brand(), node('span', 'a xelulabs project', 'brand-credit'));
+    const content = node('div', undefined, 'card-content');
+    const scene = node('div', undefined, 'card-scene');
+    scene.append(node('p', 'XELU / ON WATCH', 'eyebrow'), node('div', "hey. don't send that yet.", 'speech-bubble'), mascot('card-mascot'));
+    const body = node('div', undefined, 'card-body');
+    const heading = node('h1', 'Check this credential submission'); heading.id = 'bf-dialog-title';
+    const desc = node('p', reason, 'description'); desc.id = 'bf-dialog-description';
+    body.append(node('p', 'FORM SUBMISSION PAUSED', 'eyebrow'), heading, desc);
+    if (frameHost) {
+      const caption = node('p', 'FORM FRAME', 'frame-caption');
+      caption.append(node('strong', frameHost));
+      body.append(caption);
+    }
+    const list = node('ul', undefined, 'reasons');
+    for (const s of scored.signals.filter(s => s.contribution > 0).slice(0, 4)) list.append(node('li', s.detail));
+    body.append(node('p', 'What Xelu noticed', 'reason-heading'), list);
+    const actions = node('div', undefined, 'actions');
+    const cancel = node('button', 'Cancel submission', 'cancel');
+    const proceed = node('button', 'Submit once anyway', 'proceed');
+    cancel.addEventListener('click', () => settle(false));
+    proceed.addEventListener('click', e => { if (e.isTrusted) settle(true); });
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { e.preventDefault(); settle(false); }
+      if (e.key === 'Tab') { e.preventDefault(); (root.activeElement === cancel ? proceed : cancel).focus(); }
+    });
+    actions.append(cancel, proceed); body.append(actions); content.append(scene, body);
+    const footer = node('div', undefined, 'card-footer');
+    footer.append(node('span', 'Local protection. Your decision.'), node('span', 'RISK INDICATOR ' + scored.score + ' / 100'));
+    card.append(header, content, footer); dialog.append(card); root.append(dialog); cancel.focus();
+    return new Promise(resolve => { pendingResolve = resolve; });
   }
-  return host._bfRoot;
-}
-
-function bfShowBanner(scored) {
-  const root = bfGetShadowRoot();
-  const existing = root.querySelector(".banner");
-  if (existing) existing.remove();
-
-  const topReasons = scored.signals.slice(0, 2).map(s => s.detail).join(" · ");
-  const el = document.createElement("div");
-  el.className = "banner" + (scored.level === "MEDIUM" ? " medium" : "");
-  el.innerHTML = `
-    <span>⚠️ <strong>BlackFish:</strong> this page shows signs of phishing (score ${scored.score}/100)</span>
-    <span class="reasons">${topReasons}</span>
-    <button data-action="trust">Trust this site</button>
-    <button data-action="dismiss">Dismiss</button>
-  `;
-  el.querySelector('[data-action="dismiss"]').addEventListener("click", () => el.remove());
-  el.querySelector('[data-action="trust"]').addEventListener("click", () => {
-    bfSendMessage({ type: "TRUST_SITE", origin: location.origin });
-    el.remove();
-  });
-  root.appendChild(el);
-}
-
-function bfShowInterstitial(scored, onProceed) {
-  const root = bfGetShadowRoot();
-  const existing = root.querySelector(".interstitial");
-  if (existing) existing.remove();
-
-  const reasons = scored.signals.slice(0, 4).map(s => `<li>${s.detail}</li>`).join("");
-  const el = document.createElement("div");
-  el.className = "interstitial";
-  el.innerHTML = `
-    <div class="card">
-      <h1>⚠ This looks like a phishing attempt</h1>
-      <p>BlackFish blocked a credential submission to an unexpected destination (risk score ${scored.score}/100).</p>
-      <ul>${reasons}</ul>
-      <div class="actions">
-        <button class="go-back">Go back</button>
-        <button class="proceed">Submit anyway</button>
-      </div>
-    </div>
-  `;
-  el.querySelector(".go-back").addEventListener("click", () => {
-    el.remove();
-    if (history.length > 1) history.back();
-  });
-  el.querySelector(".proceed").addEventListener("click", () => {
-    el.remove();
-    onProceed();
-  });
-  root.appendChild(el);
-}
-
-function bfSendMessage(msg) {
-  try { chrome.runtime.sendMessage(msg); } catch {}
+  function clear() { clearBanner(); settle(false); }
+  return { render, prompt, clear, isOwnNode: n => !!host && (n === host || host.contains(n)), cancelPrompt: () => settle(false) };
 }
