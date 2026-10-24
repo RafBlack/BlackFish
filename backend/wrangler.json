@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "blackfish-api",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-24",
+  "workers_dev": true,
+  "observability": { "enabled": false },
+  "vars": { "MANAGED_AI_ENABLED": "false", "EVALUATION_APPROVED": "false", "EVALUATION_EXAMPLES_VERSION": "", "EVALUATION_CORPUS_SHA": "" },
+  "d1_databases": [{ "binding": "DB", "database_name": "blackfish-beta", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "migrations" }],
+  "ai": { "binding": "AI" },
+  "triggers": { "crons": ["17 0 * * *"] }
+}
