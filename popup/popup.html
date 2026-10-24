@@ -1,34 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="popup.css">
-</head>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BlackFish by xelulabs</title><link rel="stylesheet" href="../ui/theme.css"><link rel="stylesheet" href="popup.css"></head>
 <body>
-  <header>
-    <img src="../icons/icon32.png" alt="">
-    <h1>BlackFish</h1>
-    <button id="settingsBtn" title="Options">⚙</button>
-  </header>
-
-  <div id="verdict" class="verdict low">
-    <div class="score-ring"><span id="scoreNum">—</span></div>
-    <div class="verdict-text">
-      <div id="levelLabel">Checking…</div>
-      <div id="hostLabel" class="host"></div>
+<header class="popup-header">
+  <div class="brand-lockup"><span data-xelu-mark></span><span>BLACKFISH</span></div>
+  <button id="settingsBtn" class="quiet settings-button" title="Settings" aria-label="Open settings">Settings <span aria-hidden="true">&#8599;</span></button>
+</header>
+<main>
+  <section class="mascot-stage popup-scene" aria-label="Xelu is watching out for you">
+    <p class="eyebrow">xelulabs / on watch</p>
+    <div class="speech-bubble" id="xeluLine" aria-live="polite">one moment. checking...</div>
+    <div class="mascot-slot" data-xelu-mascot></div>
+  </section>
+  <section class="scan-panel">
+    <div id="verdict" class="verdict low" role="status" aria-live="polite">
+      <div class="verdict-copy"><span class="micro-label">PAGE ASSESSMENT</span><div id="levelLabel">Checking...</div><div id="hostLabel" class="host"></div></div>
+      <div class="score-box" aria-label="Risk indicator"><span id="scoreNum">-</span><span>/ 100</span></div>
     </div>
-  </div>
-
-  <ul id="reasonList"></ul>
-  <p id="emptyState" class="empty">No suspicious signals on this page.</p>
-
-  <div class="actions">
-    <button id="rescanBtn">Rescan page</button>
-    <button id="trustBtn">Trust this site</button>
-  </div>
-
-  <footer>Heuristics run locally on this device. <span id="aiNote"></span></footer>
-
-  <script src="popup.js"></script>
-</body>
-</html>
+    <div class="evidence-heading"><span class="eyebrow">What Xelu noticed</span><span class="local-tag">LOCAL SCAN</span></div>
+    <ul id="reasonList" aria-label="Detection evidence"></ul>
+    <p id="emptyState" class="empty"></p>
+    <div class="actions"><button id="rescanBtn" class="primary">Rescan page</button><button id="trustBtn" class="quiet">Trust this site</button></div>
+  </section>
+</main>
+<footer class="popup-footer"><span>built by <a href="https://github.com/RafBlack/xelulabs" target="_blank" rel="noopener noreferrer">xelulabs</a></span><span class="status-dot">local first</span><p>Risk indicator, not a guarantee of safety.</p><p id="aiNote"></p></footer>
+<script src="../dist/popup/popup.js"></script></body></html>

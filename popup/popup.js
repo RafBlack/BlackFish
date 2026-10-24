@@ -1,59 +1,80 @@
-const verdictEl = document.getElementById("verdict");
-const scoreNum = document.getElementById("scoreNum");
-const levelLabel = document.getElementById("levelLabel");
-const hostLabel = document.getElementById("hostLabel");
-const reasonList = document.getElementById("reasonList");
-const emptyState = document.getElementById("emptyState");
-
+const verdictEl = document.getElementById('verdict');
+const level = document.getElementById('levelLabel');
+const host = document.getElementById('hostLabel');
+const score = document.getElementById('scoreNum');
+const reasons = document.getElementById('reasonList');
+const note = document.getElementById('emptyState');
+const aiNote = document.getElementById('aiNote');
+const rescan = document.getElementById('rescanBtn');
+const trust = document.getElementById('trustBtn');
+let tabId, version = -1, documentId = '', disposed = false;
 function render(result) {
-  if (!result) {
-    levelLabel.textContent = "Not scanned";
-    hostLabel.textContent = "Either this page hasn't finished loading, or it's a browser-internal page (chrome://, an error interstitial, the Web Store, a PDF viewer) that extensions can't run on at all.";
-    scoreNum.textContent = "—";
-    reasonList.innerHTML = "";
-    emptyState.style.display = "none";
-    return;
-  }
-
-  const { scored, url } = result;
-  verdictEl.className = "verdict " + scored.level.toLowerCase();
-  scoreNum.textContent = scored.score;
-  levelLabel.textContent = {
-    LOW: "Looks safe",
-    MEDIUM: "Some risk signals",
-    HIGH: "High phishing risk"
-  }[scored.level];
-  try { hostLabel.textContent = new URL(url).hostname; } catch { hostLabel.textContent = url; }
-
-  reasonList.innerHTML = "";
-  if (scored.signals.length === 0) {
-    emptyState.style.display = "block";
-  } else {
-    emptyState.style.display = "none";
-    for (const s of scored.signals) {
-      const li = document.createElement("li");
-      li.textContent = s.detail;
-      reasonList.appendChild(li);
+  if (!result) return;
+  if (result.documentId === documentId && (result.version ?? 0) < version) return;
+  documentId = result.documentId; version = result.version ?? 0;
+  const state = result.state;
+  const scored = result.scored;
+  document.getElementById('xeluLine').textContent = xeluMessage(state, scored?.level);
+  verdictEl.className = 'verdict ' + (scored?.level.toLowerCase() || 'low');
+  score.textContent = ['unsupported','failed','trusted'].includes(state) ? '-' : String(scored?.score ?? '-');
+  level.textContent = {
+    unsupported: 'Page cannot be scanned', failed: 'Scan failed', scanning: 'Scanning...',
+    trusted: 'Trusted site: protection paused'
+  }[state] || { LOW: 'No strong phishing indicators detected', MEDIUM: 'Risk indicators detected', HIGH: 'High phishing risk' }[scored?.level] || 'Waiting for scan';
+  try { host.textContent = new URL(result.url).hostname; } catch { host.textContent = ''; }
+  reasons.replaceChildren();
+  for (const s of scored?.signals || []) {
+    const li = document.createElement('li');
+    const copy = document.createElement('span');
+    copy.textContent = s.detail;
+    if (s.frameId || s.occurrences > 1) {
+      const meta = document.createElement('span'); meta.className = 'reason-meta';
+      meta.textContent = [s.frameId ? 'frame: ' + s.frameHost : '', s.occurrences > 1 ? 'Repeated evidence counted once' : ''].filter(Boolean).join(' / ');
+      copy.append(meta);
     }
+    const points = document.createElement('span'); points.className = 'reason-points';
+    points.textContent = s.contribution > 0 ? '+' + s.contribution : 'info';
+    points.setAttribute('aria-label', s.contribution + ' score points');
+    li.append(copy, points);
+    reasons.append(li);
   }
+  const text = [];
+  if (state === 'unsupported') text.push('Browser pages, the Web Store, and some viewers do not permit scanning.');
+  if (state === 'failed') text.push('Reload the page and try again. A failed scan is not a safe verdict.');
+  if (state === 'trusted') text.push('Scanning and submission warnings are paused for this exact origin and its embedded frames. Remove trust in Settings to resume.');
+  if (result.truncated) text.push('Large page: scan limits reached. Coverage is partial.');
+  if (result.navigation?.length) text.push(...result.navigation);
+  if (!text.length && !scored?.signals.length && state === 'complete') text.push('No matching indicators. This is not a guarantee of safety.');
+  note.textContent = text.join(' '); note.hidden = !text.length;
+  const ai = result.ai || { status: 'off' };
+  aiNote.textContent = ai.status === 'complete' ? 'Experimental AI advice: ' + (ai.escalate ? 'additional concern. ' : 'no additional concern. ') + ai.reason : 'AI advice: ' + ai.status + '.';
+  trust.disabled = ['unsupported','trusted','failed'].includes(state);
+  rescan.disabled = state === 'unsupported';
 }
-
-chrome.runtime.sendMessage({ type: "GET_TAB_STATUS" }, render);
-
-document.getElementById("rescanBtn").addEventListener("click", () => {
-  chrome.runtime.sendMessage({ type: "RESCAN_ACTIVE_TAB" });
-  levelLabel.textContent = "Rescanning…";
-  setTimeout(() => chrome.runtime.sendMessage({ type: "GET_TAB_STATUS" }, render), 600);
+async function request(type) { return chrome.runtime.sendMessage({ type, tabId }); }
+chrome.runtime.onMessage.addListener(msg => {
+  if (msg.type === 'TAB_STATUS_UPDATED' && msg.tabId === tabId && !disposed) render(msg.result);
 });
-
-document.getElementById("trustBtn").addEventListener("click", async () => {
+rescan.addEventListener('click', async () => {
+  rescan.disabled = true; level.textContent = 'Scanning...';
+  try {
+    const reply = await request('RESCAN_ACTIVE_TAB');
+    if (reply.result) render(reply.result);
+    if (!reply.ok) { note.hidden = false; note.textContent = reply.error || 'Rescan did not complete. Reload this page.'; }
+  } catch (error) { note.hidden = false; note.textContent = error.message; }
+  finally { rescan.disabled = false; }
+});
+trust.addEventListener('click', async () => {
+  const reply = await request('TRUST_SITE');
+  if (!reply?.ok) { note.hidden = false; note.textContent = reply?.error || 'Could not trust this site.'; }
+  else render(await request('GET_TAB_STATUS'));
+});
+document.getElementById('settingsBtn').addEventListener('click', () => chrome.runtime.openOptionsPage());
+window.addEventListener('pagehide', () => { disposed = true; });
+(async () => {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.url) return;
-  const origin = new URL(tab.url).origin;
-  chrome.runtime.sendMessage({ type: "TRUST_SITE", origin });
-  window.close();
-});
-
-document.getElementById("settingsBtn").addEventListener("click", () => {
-  chrome.runtime.openOptionsPage();
-});
+  tabId = tab?.id;
+  if (tabId != null) render(await request('GET_TAB_STATUS'));
+})().catch(error => { level.textContent = 'Status unavailable'; note.hidden = false; note.textContent = error.message; });
+import { mountBrand, xeluMessage } from '../ui/brand.js';
+mountBrand(document);

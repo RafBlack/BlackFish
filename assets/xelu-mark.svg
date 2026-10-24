@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#0c0c0d"/>
+  <defs>
+    <g id="x" fill="none" stroke-width="56" stroke-linecap="round" stroke-linejoin="round" transform="translate(16 16) scale(0.0478) translate(-280 -270)">
+      <path d="M150 40 L230 210"/>
+      <path d="M390 80 L140 500 L40 250 L520 470"/>
+      <path d="M500 140 L420 320"/>
+    </g>
+  </defs>
+  <use href="#x" stroke="#8a2d45" transform="translate(-1 0)"/>
+  <use href="#x" stroke="#2d7f86" transform="translate(1 0)"/>
+  <use href="#x" stroke="#f2f2ef"/>
+</svg>

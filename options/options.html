@@ -1,87 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>BlackFish Settings</title>
-  <style>
-    body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; max-width: 640px; margin: 32px auto; color: #1f1f1f; padding: 0 16px; }
-    h1 { font-size: 20px; display: flex; align-items: center; gap: 8px; }
-    h1 img { width: 26px; height: 26px; }
-    section { margin: 28px 0; padding: 18px 20px; border: 1px solid #e4e4e4; border-radius: 8px; }
-    h2 { font-size: 14px; margin: 0 0 6px; }
-    p.hint { font-size: 12.5px; color: #666; margin: 0 0 14px; line-height: 1.5; }
-    ul { list-style: none; padding: 0; margin: 0 0 12px; }
-    li { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
-    li button { border: none; background: none; color: #b3261e; cursor: pointer; font-size: 12px; }
-    .row { display: flex; gap: 8px; }
-    input[type=text], input[type=password], select { flex: 1; padding: 7px 9px; border: 1px solid #ccc; border-radius: 5px; font-size: 13px; }
-    button.primary { background: #1a5fb4; color: #fff; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; }
-    label.toggle { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 12px; }
-    .field { margin-bottom: 10px; }
-    .field label { display: block; font-size: 12px; color: #555; margin-bottom: 3px; }
-    #saveStatus { font-size: 12px; color: #2f7d4f; margin-left: 10px; }
-    .warn { font-size: 12px; color: #8a5a00; background: #fff6e6; border-radius: 5px; padding: 8px 10px; margin-top: 10px; }
-  </style>
-</head>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BlackFish settings / xelulabs</title><link rel="stylesheet" href="../ui/theme.css"><link rel="stylesheet" href="options.css"></head>
 <body>
-  <h1><img src="../icons/icon32.png" alt=""> BlackFish Settings</h1>
-
-  <section>
-    <h2>Trusted sites</h2>
-    <p class="hint">Sites you've marked "Trust this site" from the popup. BlackFish never scans or warns on these.</p>
-    <ul id="allowlist"></ul>
-    <p class="hint" id="allowlistEmpty">No trusted sites yet.</p>
-  </section>
-
-  <section>
-    <h2>Custom brand list</h2>
-    <p class="hint">Add domains you want protected against lookalikes (e.g. your company's login domain). Merged with the bundled list of major brands.</p>
-    <div class="row">
-      <input type="text" id="brandInput" placeholder="example.com">
-      <button class="primary" id="addBrandBtn">Add</button>
-    </div>
-    <ul id="brandlist" style="margin-top:10px;"></ul>
-  </section>
-
-  <section>
-    <h2>AI-assist (optional)</h2>
-    <p class="hint">
-      When enabled, BlackFish sends a small JSON summary — hostname, matched
-      heuristic IDs, page title — <strong>never full page HTML, form contents,
-      or anything you type</strong> — to the endpoint below, and only for
-      pages that heuristics scored as borderline. This keeps AI calls rare,
-      off the render path, and never a dependency for basic protection.
-    </p>
-    <label class="toggle"><input type="checkbox" id="aiEnabled"> Enable AI-assist</label>
-
-    <div class="field">
-      <label>Provider preset</label>
-      <select id="presetSelect">
-        <option value="custom">Custom endpoint</option>
-        <option value="grok">xAI Grok (api.x.ai)</option>
-        <option value="local">Local model, e.g. Hermes via Ollama (localhost)</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Endpoint URL</label>
-      <input type="text" id="aiEndpoint" placeholder="https://api.x.ai/v1/chat/completions">
-    </div>
-    <div class="field">
-      <label>Model name</label>
-      <input type="text" id="aiModel" placeholder="grok-4-latest">
-    </div>
-    <div class="field">
-      <label>API key <span style="font-weight:400;color:#999;">(stored locally in this browser profile — not a secrets vault)</span></label>
-      <input type="password" id="aiKey" placeholder="sk-...">
-    </div>
-    <p class="warn" id="permWarn" style="display:none;">
-      Saving will ask Chrome to grant BlackFish network access to this one endpoint. Nothing else changes.
-    </p>
-  </section>
-
-  <button class="primary" id="saveBtn">Save settings</button>
-  <span id="saveStatus"></span>
-
-  <script src="options.js"></script>
-</body>
-</html>
+<div class="settings-shell">
+<header class="settings-header"><div class="brand-lockup"><span data-xelu-mark></span><span>BLACKFISH</span></div><a class="header-credit" href="https://github.com/RafBlack/xelulabs" target="_blank" rel="noopener noreferrer">a xelulabs project <span aria-hidden="true">&#8599;</span></a></header>
+<main>
+<section class="settings-hero" aria-labelledby="settings-title">
+  <div class="hero-copy"><p class="eyebrow">YOUR LOOKOUT / YOUR RULES</p><h1 id="settings-title">XELU'S<br><span>WATCHLIST.</span></h1><p class="hero-description">A little less bait.<br>A little more peace of mind.</p><p class="terminal-line"><span>$</span> configure blackfish <span class="cursor" aria-hidden="true">_</span></p></div>
+  <div class="mascot-stage settings-scene"><div class="speech-bubble">your privacy. your call.</div><div class="mascot-slot" data-xelu-mascot></div></div>
+</section>
+<div class="settings-layout">
+  <aside class="settings-nav" aria-label="Settings sections"><p class="nav-caption">CONFIGURATION</p><a href="#trusted">01 <span>Trusted sites</span></a><a href="#protected">02 <span>Protected domains</span></a><a href="#ai">03 <span>AI second opinion</span></a><a href="#notices">04 <span>Migration notes</span></a><div class="local-note"><span class="local-indicator"></span>Local protection stays on.<p>AI is optional. Your password never enters the conversation.</p></div></aside>
+  <div class="settings-sections">
+    <section id="trusted" class="settings-card" aria-labelledby="trusted-title"><div class="section-heading"><span class="section-number">01</span><div><p class="eyebrow">EXCEPTIONS</p><h2 id="trusted-title">Sites you trust.</h2></div></div><p>Trust pauses scanning and submission warnings for this exact origin and its embedded frames. Schemes, ports, and subdomains are separate. Changes apply to open pages.</p><ul id="allowlist" class="settings-list"></ul><p id="allowlistEmpty" class="empty-list"><span aria-hidden="true">[ ]</span> No trusted sites yet. Xelu is keeping watch.</p></section>
+    <section id="protected" class="settings-card" aria-labelledby="protected-title"><div class="section-heading"><span class="section-number">02</span><div><p class="eyebrow">IDENTITY PROTECTION</p><h2 id="protected-title">Keep an eye on these.</h2></div></div><p>Add a real domain you want protected against lookalikes. Protection does not grant that domain unconditional trust.</p><label for="brandInput">Protected domain</label><div class="input-row"><input id="brandInput" type="text" placeholder="your-company.com" spellcheck="false" autocomplete="off"><button id="addBrandBtn" class="primary" type="button">Add domain <span aria-hidden="true">+</span></button></div><ul id="brandlist" class="settings-list"></ul></section>
+    <section id="ai" class="settings-card" aria-labelledby="ai-title"><div class="section-heading"><span class="section-number">03</span><div><p class="eyebrow">OPTIONAL / EXPERIMENTAL</p><h2 id="ai-title">A second opinion.</h2></div></div><p>AI can offer advice in the popup. It cannot change the local score, block a submission, or authorize one. Its additional detection value has not been established.</p>
+      <label class="toggle-row" for="aiEnabled"><span><strong>Ask AI for advice</strong><small>Off by default. Local detection works without it.</small></span><input id="aiEnabled" type="checkbox"><span class="toggle-track" aria-hidden="true"></span></label>
+      <div class="privacy-note"><span class="note-label">WHAT LEAVES YOUR BROWSER</span><p>Only the hostname, matched rule IDs, and whether credential fields exist. No raw titles, full URLs, page text, HTML, field values, or credentials. Hostnames may still reveal a site you visit to your selected provider.</p></div>
+      <div class="form-grid"><div class="field"><label for="presetSelect">Endpoint preset</label><select id="presetSelect"><option value="custom">Supported endpoint</option><option value="grok">xAI</option><option value="local">Local OpenAI-compatible model</option></select></div><div class="field"><label for="aiModel">Available model name</label><input id="aiModel" type="text" placeholder="your-model-name" spellcheck="false"></div><div class="field full"><label for="aiEndpoint">Endpoint URL</label><input id="aiEndpoint" type="text" placeholder="http://localhost:11434/v1/chat/completions" spellcheck="false"></div><div class="field full"><label for="aiKey">API key <span class="optional-label">optional for local models</span></label><input id="aiKey" type="password" autocomplete="off" placeholder="Stored only in this browser profile"></div></div>
+      <p class="fine-print">Keys are restricted to extension pages and its worker, not encrypted in a secrets vault. Enabling AI requests network access to the supported endpoint. Limit: eight requests per document, thirty per hour, with a three-second deadline.</p>
+      <div class="save-row"><button id="saveBtn" class="primary" type="button">Save AI settings <span aria-hidden="true">&#8594;</span></button></div>
+    </section>
+    <section id="notices" class="settings-card" aria-labelledby="notices-title"><div class="section-heading"><span class="section-number">04</span><div><p class="eyebrow">HOUSEKEEPING</p><h2 id="notices-title">A few notes.</h2></div></div><p>Invalid legacy entries are excluded from active settings and listed here for review.</p><p id="rejected" class="notice" hidden></p><button id="clearNotices" class="quiet" type="button">Clear notices</button></section>
+  </div>
+</div>
+</main>
+<footer class="settings-footer"><span>BLACKFISH <span class="footer-divider">/</span> built by xelulabs</span><span>LOCAL FIRST. HUMAN ALWAYS.</span></footer>
+</div>
+<div id="saveStatus" class="save-status" role="status" aria-live="polite" hidden></div>
+<script src="../dist/options/options.js"></script></body></html>
