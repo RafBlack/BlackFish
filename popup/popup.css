@@ -1,4 +1,5 @@
-body{width:400px;max-width:100vw;max-height:600px;overflow-x:hidden;overflow-y:auto;background:var(--bg)}
+html{width:400px}
+body{max-height:600px;overflow-x:hidden;overflow-y:auto;background:var(--bg)}
 .popup-header{display:flex;align-items:center;justify-content:space-between;margin:0 20px;padding:16px 0 14px;border-bottom:1px solid var(--line)}
 .settings-button{min-height:30px;padding:5px 8px;font-size:10px}
 .settings-button span{margin-left:5px;color:var(--cyan)}

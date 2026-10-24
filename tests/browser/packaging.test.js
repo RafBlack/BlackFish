@@ -27,12 +27,17 @@ test('both manifests reference existing bundles and local UI scripts', async () 
   }
 });
 
-test('standalone dist registers its worker, scans a page, and loads settings and popup', async () => {
-  const directory = path.join(root, 'dist');
-  const profile = await mkdtemp(path.join(tmpdir(), 'blackfish-dist-'));
+for (const packageName of ['root', 'dist']) test(packageName + ' registers its worker, scans a page, and sizes the toolbar popup', async () => {
+  const directory = packageName === 'root' ? root : path.join(root, 'dist');
+  const profile = await mkdtemp(path.join(tmpdir(), 'blackfish-package-'));
   const context = await chromium.launchPersistentContext(profile, {
-    channel: 'chromium', headless: true,
+    channel: 'chromium', headless: true, viewport: null,
     args: ['--disable-extensions-except=' + directory, '--load-extension=' + directory]
+  });
+  const errors = [];
+  context.on('page', page => {
+    page.on('pageerror', error => errors.push(error.message));
+    page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
   });
   try {
     await context.route('**/*', route => {
@@ -63,7 +68,26 @@ test('standalone dist registers its worker, scans a page, and loads settings and
     const popup = await context.newPage();
     await popup.goto('chrome-extension://' + id + '/popup/popup.html');
     await popup.getByText('Page cannot be scanned', { exact: true }).waitFor();
+    await popup.close();
+
+    await page.bringToFront();
+    await worker.evaluate(() => chrome.action.openPopup());
+    await options.waitForFunction(() => chrome.extension.getViews({ type: 'popup' })[0]?.document.getElementById('levelLabel')?.textContent === 'No strong phishing indicators detected');
+    await options.evaluate(() => chrome.extension.getViews({ type: 'popup' })[0].document.fonts.ready);
+    const toolbarWidth = () => options.evaluate(() => chrome.extension.getViews({ type: 'popup' })[0].document.documentElement.getBoundingClientRect().width);
+    assert.equal(await toolbarWidth(), 400, 'toolbar popup reserves its intended width');
+
+    await page.evaluate(() => {
+      document.title = 'Facebook';
+      const frame = document.createElement('iframe');
+      frame.src = 'https://frame.example.org/';
+      frame.hidden = true;
+      document.body.append(frame);
+    });
+    await options.waitForFunction(() => chrome.extension.getViews({ type: 'popup' })[0]?.document.getElementById('reasonList')?.children.length >= 2);
+    assert.equal(await toolbarWidth(), 400, 'evidence updates do not compress the toolbar popup');
   } finally {
     await context.close();
   }
+  assert.deepEqual(errors, [], 'extension pages have no JavaScript or console errors');
 });
