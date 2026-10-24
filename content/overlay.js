@@ -41,24 +41,25 @@ export function createOverlay(doc, onTrust) {
     if (previousFocus?.isConnected) previousFocus.focus();
     resolve?.(approved);
   }
-  function render(scored, state = 'complete') {
-    const key = evidenceFingerprint(scored);
-    if (state === 'trusted' || scored.level === 'LOW') { clearBanner(); return; }
+  function render(scored, state = 'complete', reputation = { status: 'off' }) {
+    const confirmed = reputation.status === 'confirmed' && reputation.expiresAt > Date.now() && reputation.freshUntil > Date.now();
+    const key = evidenceFingerprint(scored) + (confirmed ? ':threat:' + reputation.id + ':' + reputation.revision : '');
+    if (state === 'trusted' || scored.level === 'LOW' && !confirmed) { clearBanner(); return; }
     if (key === dismissed) return;
     if (!ensure() || key === lastBanner && banner?.isConnected) return;
     clearBanner(); lastBanner = key;
     banner = node('aside', undefined, 'banner');
-    banner.dataset.level = scored.level;
+    banner.dataset.level = confirmed ? 'HIGH' : scored.level;
     banner.setAttribute('role', 'status'); banner.setAttribute('aria-label', 'BlackFish: Xelu phishing warning');
     const header = node('div', undefined, 'banner-header');
     header.append(brand(), node('span', 'by xelulabs', 'brand-credit'));
     const stage = node('div', undefined, 'banner-stage');
     stage.append(
-      node('div', xeluMessage('complete', scored.level), 'speech-bubble'),
+      node('div', confirmed ? "i've seen this bait before." : xeluMessage('complete', scored.level), 'speech-bubble'),
       mascot('banner-mascot'),
-      node('p', (scored.level === 'HIGH' ? 'HIGH PHISHING RISK' : 'RISK INDICATORS DETECTED') + ' / ' + scored.score + ' OF 100', 'banner-state')
+      node('p', confirmed ? 'PREVIOUSLY CONFIRMED PHISHING' : (scored.level === 'HIGH' ? 'HIGH PHISHING RISK' : 'RISK INDICATORS DETECTED') + ' / ' + scored.score + ' OF 100', 'banner-state')
     );
-    const reasons = node('p', scored.signals.filter(s => s.contribution > 0).slice(0, 2).map(s => s.detail).join(' '), 'banner-reasons');
+    const reasons = node('p', confirmed ? 'XeluLabs review: ' + reputation.provenance + ' Local risk indicator: ' + scored.score + '/100.' : scored.signals.filter(s => s.contribution > 0).slice(0, 2).map(s => s.detail).join(' '), 'banner-reasons');
     const actions = node('div', undefined, 'banner-actions');
     const trust = node('button', 'Trust this site', 'trust');
     trust.addEventListener('click', async e => { if (e.isTrusted) { trust.disabled = true; try { await onTrust(); clear(); } catch { trust.disabled = false; } } });

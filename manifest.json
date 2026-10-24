@@ -6,9 +6,11 @@
   "description": "Local login-phishing warnings for lookalike domains and risky credential forms. Optional AI provides advice only.",
   "permissions": [
     "storage",
+    "alarms",
     "webNavigation"
   ],
   "optional_host_permissions": [
+    "https://*.workers.dev/*",
     "https://api.x.ai/*",
     "http://localhost/*",
     "http://127.0.0.1/*"
