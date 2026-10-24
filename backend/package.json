@@ -9,7 +9,9 @@
   "scripts": {
     "dev": "wrangler dev",
     "test": "node --test --test-concurrency=1 test/*.test.js",
-    "deploy:check": "wrangler deploy --dry-run"
+    "admin": "node scripts/admin.mjs",
+    "deploy:check": "wrangler deploy --dry-run",
+    "evaluate:reviewed": "node scripts/evaluate-reviewed.mjs evaluation/reviewed-corpus.json"
   },
   "devDependencies": {
     "wrangler": "4.152.0"
