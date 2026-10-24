@@ -110,6 +110,52 @@ test('malicious child frames are attributed and their removal lowers the parent 
   await page.close();
 });
 
+for (const width of [1440,390]) test('verified Stripe iframe clears false warnings and deceptive frames still warn at '+width+'px',async()=>{
+  const verified='https://m.stripe.network/fixture', deceptive='https://m.stripe.network.evil.com/fixture';
+  route(verified,html('<p>Embedded payment fixture</p>','Stripe'));
+  route(deceptive,html('<p>Deceptive frame fixture</p>'));
+  const page=await open('https://dash.cloudflare.com/billing','<iframe hidden src="'+verified+'"></iframe>');
+  page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
+  await page.setViewportSize({width,height:844});
+  const first=await complete(page,s=>s.frameCount===2 && s.scored.score===0);
+  assert.equal(first.state,'complete');
+  assert.equal(first.scored.signals.some(s=>s.category==='identity'),false);
+  assert.equal((await treeText(page)).includes('RISK INDICATORS DETECTED'),false);
+  const tabId=await idFor(page), popup=await context.newPage();
+  popup.on('pageerror',e=>errors.push(e.message));
+  popup.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
+  await popup.addInitScript(({tabId})=>{
+    const original=chrome.tabs.query;
+    chrome.tabs.query=(q,...args)=>q.active && q.currentWindow ? Promise.resolve([{id:tabId}]) : original(q,...args);
+  },{tabId});
+  await popup.setViewportSize({width:400,height:600});
+  await popup.goto('chrome-extension://'+extensionId+'/popup/popup.html');
+  await popup.getByText('No strong phishing indicators detected',{exact:true}).waitFor();
+  await page.evaluate(url=>document.querySelector('iframe').src=url,deceptive);
+  const suspicious=await complete(page,s=>s.frameCount===2 && s.scored.level==='MEDIUM');
+  assert.ok(suspicious.scored.signals.some(s=>s.brand==='stripe.com' && s.frameHost==='m.stripe.network.evil.com' && s.contribution>0));
+  await popup.getByText('Risk indicators detected',{exact:true}).waitFor();
+  await waitFor(async()=>(await treeText(page)).includes('RISK INDICATORS DETECTED'),'frame warning');
+  await page.evaluate(url=>document.querySelector('iframe').src=url,verified);
+  await complete(page,s=>s.frameCount===2 && s.scored.score===0);
+  await popup.getByText('No strong phishing indicators detected',{exact:true}).waitFor();
+  await waitFor(async()=>!(await treeText(page)).includes('RISK INDICATORS DETECTED'),'obsolete warning removal');
+  const rescanned=await api.evaluate(tabId=>chrome.runtime.sendMessage({type:'RESCAN_ACTIVE_TAB',tabId}),tabId);
+  assert.equal(rescanned.ok,true);assert.equal(rescanned.result.scored.score,0);
+  assert.equal((await api.evaluate(()=>chrome.runtime.sendMessage({type:'GET_SETTINGS'}))).settings.bf_allowlist.includes('https://dash.cloudflare.com'),false);
+  await popup.close();await page.close();
+});
+
+test('verified Stripe host still interrupts insecure password submissions',async()=>{
+  const page=await open('https://m.stripe.network/guard',form.replace('<form id="login">','<form id="login" action="http://m.stripe.network/collect">'),'Stripe');
+  const result=await complete(page);
+  assert.equal(result.scored.signals.some(s=>s.category==='identity'),false);
+  assert.ok(result.scored.signals.some(s=>s.id==='insecure-credential-form'));
+  await page.locator('#submit').click();await dialog(page);
+  assert.equal(await page.evaluate(()=>window.submissions.length),0);
+  await cancel(page);await page.close();
+});
+
 test('cancel never grants submission approval; same-site phishing needs an explicit one-time override',async()=>{
   const page=await open('https://paypa1.com/guard',form);
   await page.locator('#submit').click();await dialog(page);

@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { domainInfo, normalizeDomain, confusableSkeleton } from '../../lib/heuristics/domain.js';
 import { bfAnalyzeUrl } from '../../lib/heuristics/url-analysis.js';
 import { bfCheckLookalikeDomain } from '../../lib/heuristics/lookalike-domain.js';
-import { bfSameBrandFamily, brandsWithCustom } from '../../lib/heuristics/brand-list.js';
+import { BF_BRANDS, approvedFor, bfSameBrandFamily, brandsWithCustom } from '../../lib/heuristics/brand-list.js';
+
 test('private suffixes preserve distinct tenant boundaries', () => {
   assert.equal(domainInfo('victim.github.io').domain,'victim.github.io');
   assert.equal(domainInfo('attacker.github.io').domain,'attacker.github.io');
@@ -23,6 +24,24 @@ test('suffix changes are evaluated; approved siblings remain legitimate', () => 
   assert.equal(bfSameBrandFamily('outlook.com','office.com'),true);
   assert.equal(bfSameBrandFamily('outlook.com','office.com.evil.test'),false);
 });
+
+test('verified Stripe host matches exactly while deceptive and unverified hosts remain suspicious', () => {
+  const stripe = BF_BRANDS.find(b => b.id === 'stripe.com');
+  const verified = bfAnalyzeUrl('https://M.Stripe.Network./');
+  assert.equal(approvedFor(stripe, verified.hostname),true);
+  assert.deepEqual(bfCheckLookalikeDomain(verified.registrableDomain, verified.hostname),[]);
+  assert.equal(bfSameBrandFamily('checkout.stripe.com','m.stripe.network'),true);
+  const custom = brandsWithCustom(['m.stripe.network']);
+  assert.equal(custom.length,BF_BRANDS.length);
+  assert.deepEqual(bfCheckLookalikeDomain('stripe.com','checkout.stripe.com',custom),[]);
+  assert.equal(approvedFor(stripe,'m-stripe.network'),false);
+  for (const host of ['stripe.network','other.stripe.network','login.m.stripe.network','m.stripe.network.evil.com','strlpe.network']) {
+    assert.equal(approvedFor(stripe,host),false,host);
+    assert.equal(bfSameBrandFamily('stripe.com',host),false,host);
+    assert.ok(bfCheckLookalikeDomain(domainInfo(host).domain,host).some(s=>s.brand==='stripe.com'),host);
+  }
+});
+
 test('query strings and IDN encoding are not independent suspicion', () => {
   assert.equal(bfAnalyzeUrl('https://example.com/?email=alice@example.com&login=verify').signals.length,0);
   assert.equal(bfAnalyzeUrl('https://ma\u00f1ana.es').signals.length,0);
