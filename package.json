@@ -1,0 +1,25 @@
+{
+  "name": "blackfish",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/unit/*.test.js",
+    "test:browser": "npm run build && node --test --test-concurrency=1 tests/browser/*.test.js",
+    "evaluate": "node scripts/evaluate.mjs",
+    "check": "npm test && npm run test:browser && npm run evaluate",
+    "evaluate:ai:export": "node scripts/export-ai-evaluation.mjs"
+  },
+  "dependencies": {
+    "punycode": "2.3.1",
+    "tldts": "7.0.25"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12",
+    "playwright": "1.56.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,45 +1,36 @@
 {
   "manifest_version": 3,
-  "name": "BlackFish — Real-Time Phishing Detector",
-  "version": "0.1.0",
-  "description": "Local, on-device heuristics flag lookalike domains, credential-harvesting forms, redirect abuse and DOM tricks in real time. No page content ever leaves your machine unless you opt in to AI-assist.",
-
+  "name": "BlackFish by xelulabs",
+  "homepage_url": "https://github.com/RafBlack/xelulabs",
+  "version": "0.2.0",
+  "description": "Local login-phishing warnings for lookalike domains and risky credential forms. Optional AI provides advice only.",
   "permissions": [
     "storage",
-    "activeTab",
-    "scripting",
     "webNavigation"
   ],
-
   "optional_host_permissions": [
     "https://api.x.ai/*",
     "http://localhost/*",
     "http://127.0.0.1/*"
   ],
-
   "background": {
-    "service_worker": "background/service-worker.js",
+    "service_worker": "dist/background/service-worker.js",
     "type": "module"
   },
-
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
       "run_at": "document_start",
       "all_frames": true,
       "js": [
-        "lib/heuristics/brand-list.js",
-        "lib/heuristics/url-analysis.js",
-        "lib/heuristics/lookalike-domain.js",
-        "lib/heuristics/score.js",
-        "content/dom-scanner.js",
-        "content/form-guard.js",
-        "content/overlay.js",
-        "content/content-script.js"
-      ]
+        "dist/content/content-script.js"
+      ],
+      "match_about_blank": true
     }
   ],
-
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": {
@@ -49,15 +40,12 @@
       "128": "icons/icon128.png"
     }
   },
-
   "options_page": "options/options.html",
-
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-
   "minimum_chrome_version": "116"
 }
