@@ -14,7 +14,7 @@ for (const [entry, format] of [
     if (output.imports.some(item => item.external)) throw new Error('Extension bundles must not contain external imports: ' + entry);
   }
 }
-for (const f of ['icons', 'assets', 'ui/theme.css', 'popup/popup.html', 'popup/popup.css', 'options/options.html', 'options/options.css']) {
+for (const f of ['icons', 'assets', 'ui/theme.css', 'popup/popup.html', 'popup/popup.css', 'options/options.html', 'options/options.css', 'PRIVACY.md', 'privacy.html']) {
   await mkdir(path.dirname(path.join(out, f)), { recursive: true });
   await cp(path.join(root, f), path.join(out, f), { recursive: true });
   if (f.endsWith('.html')) {

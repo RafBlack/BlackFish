@@ -8,6 +8,7 @@ const aiNote = document.getElementById('aiNote');
 const rescan = document.getElementById('rescanBtn');
 const trust = document.getElementById('trustBtn');
 let tabId, version = -1, documentId = '', disposed = false;
+let reportRequestId = '';
 function render(result) {
   if (!result) return;
   if (result.documentId === documentId && (result.version ?? 0) < version) return;
@@ -48,8 +49,16 @@ function render(result) {
   note.textContent = text.join(' '); note.hidden = !text.length;
   const ai = result.ai || { status: 'off' };
   aiNote.textContent = ai.status === 'complete' ? 'Experimental AI advice: ' + (ai.escalate ? 'additional concern. ' : 'no additional concern. ') + ai.reason : 'AI advice: ' + ai.status + '.';
+  const reputation = result.reputation || { status: 'off' };
+  const confirmed = reputation.status === 'confirmed';
+  document.getElementById('reputationPanel').hidden = !confirmed;
+  document.getElementById('reputationDetails').textContent = confirmed ? reputation.provenance + ' Match: ' + reputation.scope + '. Review expires ' + new Date(reputation.expiresAt).toLocaleString() + '.' : '';
+  document.getElementById('reputationNote').hidden = confirmed;
+  document.getElementById('reputationNote').textContent = 'Shared threat memory: ' + reputation.status + '. Unknown is not a safe verdict.';
+  if (confirmed) document.getElementById('xeluLine').textContent = "i've seen this bait before.";
   trust.disabled = ['unsupported','trusted','failed'].includes(state);
   rescan.disabled = state === 'unsupported';
+  document.getElementById('reportBtn').disabled = ['unsupported','trusted','failed'].includes(state);
 }
 async function request(type) { return chrome.runtime.sendMessage({ type, tabId }); }
 chrome.runtime.onMessage.addListener(msg => {
@@ -70,6 +79,29 @@ trust.addEventListener('click', async () => {
   else render(await request('GET_TAB_STATUS'));
 });
 document.getElementById('settingsBtn').addEventListener('click', () => chrome.runtime.openOptionsPage());
+document.getElementById('reportBtn').addEventListener('click', async () => {
+  const status = document.getElementById('reportStatus');
+  try {
+    const preview = await request('GET_REPORT_PREVIEW');
+    if (!preview?.ok) throw new Error(preview?.error || 'Reporting unavailable. Enable reports in Settings.');
+    reportRequestId = preview.requestId;
+    document.getElementById('reportUrl').value = preview.url;
+    document.getElementById('reportConsent').checked = false;
+    document.getElementById('confirmReport').disabled = true;
+    status.textContent = '';
+    document.getElementById('reportDialog').showModal();
+  } catch (error) { note.hidden = false; note.textContent = error.message; }
+});
+document.getElementById('reportConsent').addEventListener('change', event => { document.getElementById('confirmReport').disabled = !event.target.checked; });
+document.getElementById('cancelReport').addEventListener('click', () => document.getElementById('reportDialog').close());
+document.getElementById('confirmReport').addEventListener('click', async () => {
+  document.getElementById('confirmReport').disabled = true;
+  try {
+    const reply = await chrome.runtime.sendMessage({ type: 'SUBMIT_REPORT', requestId: reportRequestId, confirmed: true, reuseConsent: document.getElementById('reportConsent').checked });
+    if (!reply?.ok) throw new Error(reply?.error || 'Report not accepted.');
+    document.getElementById('reportStatus').textContent = 'Sent for review. This does not change the verdict.';
+  } catch (error) { document.getElementById('reportStatus').textContent = error.message; }
+});
 window.addEventListener('pagehide', () => { disposed = true; });
 (async () => {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
