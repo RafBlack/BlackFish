@@ -1,115 +1,65 @@
-const PRESETS = {
-  grok: { endpoint: "https://api.x.ai/v1/chat/completions", model: "grok-4-latest" },
-  local: { endpoint: "http://localhost:11434/v1/chat/completions", model: "hermes3" }
+import { normalizeDomain } from '../lib/heuristics/domain.js';
+import { endpointInfo } from '../lib/settings.js';
+import { mountBrand } from '../ui/brand.js';
+mountBrand(document);
+let settings;
+const el = id => document.getElementById(id);
+const send = async msg => {
+  const reply = await chrome.runtime.sendMessage(msg);
+  if (!reply?.ok) throw new Error(reply?.error || 'Settings request failed.');
+  return reply.settings;
 };
-
-async function loadAll() {
-  const res = await chrome.storage.local.get([
-    "bf_allowlist", "bf_custom_brands", "bf_ai_enabled", "bf_ai_endpoint", "bf_ai_model", "bf_ai_key"
-  ]);
-  renderAllowlist(res.bf_allowlist || []);
-  renderBrands(res.bf_custom_brands || []);
-  document.getElementById("aiEnabled").checked = !!res.bf_ai_enabled;
-  document.getElementById("aiEndpoint").value = res.bf_ai_endpoint || "";
-  document.getElementById("aiModel").value = res.bf_ai_model || "";
-  document.getElementById("aiKey").value = res.bf_ai_key || "";
-}
-
-function renderAllowlist(list) {
-  const ul = document.getElementById("allowlist");
-  ul.innerHTML = "";
-  document.getElementById("allowlistEmpty").style.display = list.length ? "none" : "block";
-  for (const origin of list) {
-    const li = document.createElement("li");
-    li.innerHTML = `<span>${origin}</span>`;
-    const btn = document.createElement("button");
-    btn.textContent = "Remove";
-    btn.addEventListener("click", async () => {
-      const res = await chrome.storage.local.get(["bf_allowlist"]);
-      const updated = (res.bf_allowlist || []).filter(o => o !== origin);
-      await chrome.storage.local.set({ bf_allowlist: updated });
-      renderAllowlist(updated);
+function message(text, error = false) { el('saveStatus').textContent = text; el('saveStatus').dataset.error = String(error); el('saveStatus').hidden = false; }
+async function save(patch) { settings = await send({ type: 'SAVE_SETTINGS', settings: patch }); renderLists(); return settings; }
+function renderList(id, values, key) {
+  const list = el(id); list.replaceChildren();
+  for (const value of values) {
+    const li = document.createElement('li'), span = document.createElement('span'), button = document.createElement('button');
+    span.textContent = value; button.textContent = 'Remove'; button.type = 'button'; button.setAttribute('aria-label', 'Remove ' + value);
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      try { settings = await send({ type: key === 'bf_allowlist' ? 'REMOVE_TRUST' : 'REMOVE_PROTECTED_DOMAIN', value }); renderLists(); }
+      catch (e) { message(e.message, true); button.disabled = false; }
     });
-    li.appendChild(btn);
-    ul.appendChild(li);
+    li.append(span, button); list.append(li);
   }
 }
-
-function renderBrands(list) {
-  const ul = document.getElementById("brandlist");
-  ul.innerHTML = "";
-  for (const domain of list) {
-    const li = document.createElement("li");
-    li.innerHTML = `<span>${domain}</span>`;
-    const btn = document.createElement("button");
-    btn.textContent = "Remove";
-    btn.addEventListener("click", async () => {
-      const res = await chrome.storage.local.get(["bf_custom_brands"]);
-      const updated = (res.bf_custom_brands || []).filter(d => d !== domain);
-      await chrome.storage.local.set({ bf_custom_brands: updated });
-      renderBrands(updated);
-    });
-    li.appendChild(btn);
-    ul.appendChild(li);
-  }
+function renderLists() {
+  renderList('allowlist', settings.bf_allowlist, 'bf_allowlist');
+  renderList('brandlist', settings.bf_custom_brands, 'bf_custom_brands');
+  el('allowlistEmpty').hidden = settings.bf_allowlist.length > 0;
+  el('rejected').textContent = settings.bf_rejected_settings.join('\n');
+  el('rejected').hidden = !settings.bf_rejected_settings.length;
 }
-
-document.getElementById("addBrandBtn").addEventListener("click", async () => {
-  const input = document.getElementById("brandInput");
-  const domain = input.value.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "");
-  if (!domain || !domain.includes(".")) return;
-  const res = await chrome.storage.local.get(["bf_custom_brands"]);
-  const list = res.bf_custom_brands || [];
-  if (!list.includes(domain)) list.push(domain);
-  await chrome.storage.local.set({ bf_custom_brands: list });
-  input.value = "";
-  renderBrands(list);
+el('addBrandBtn').addEventListener('click', async () => {
+  const domain = normalizeDomain(el('brandInput').value.trim());
+  if (!domain) { message('Enter a valid domain without a path, port, or user information.', true); return; }
+  try { settings = await send({ type: 'ADD_PROTECTED_DOMAIN', value: domain }); renderLists(); el('brandInput').value = ''; message('Protected domain added. Open pages are updating.'); }
+  catch (e) { message(e.message, true); }
 });
-
-document.getElementById("presetSelect").addEventListener("change", (e) => {
-  const preset = PRESETS[e.target.value];
-  if (preset) {
-    document.getElementById("aiEndpoint").value = preset.endpoint;
-    document.getElementById("aiModel").value = preset.model;
-  }
+el('presetSelect').addEventListener('change', e => {
+  if (e.target.value === 'grok') { el('aiEndpoint').value = 'https://api.x.ai/v1/chat/completions'; el('aiModel').value = ''; }
+  if (e.target.value === 'local') { el('aiEndpoint').value = 'http://localhost:11434/v1/chat/completions'; el('aiModel').value = ''; }
 });
-
-document.getElementById("aiEnabled").addEventListener("change", (e) => {
-  document.getElementById("permWarn").style.display = e.target.checked ? "block" : "none";
+el('saveBtn').addEventListener('click', async () => {
+  const enabled = el('aiEnabled').checked, endpoint = el('aiEndpoint').value.trim(), model = el('aiModel').value.trim(), key = el('aiKey').value.trim();
+  const info = endpointInfo(endpoint);
+  if (enabled && (!info || !model || !info.local && !key)) { message('AI needs a supported endpoint, model name, and a cloud API key. Local models may omit a key.', true); return; }
+  if (endpoint && !info) { message('Supported endpoints: https://api.x.ai, http://localhost, and http://127.0.0.1 only.', true); return; }
+  el('saveBtn').disabled = true;
+  try {
+    // Permission request happens directly in this click handler, preserving the user gesture.
+    if (enabled && !await chrome.permissions.request({ origins: [info.permission] })) { message('Network permission denied. AI remains off.', true); el('aiEnabled').checked = false; await save({ bf_ai_enabled: false }); return; }
+    await save({ bf_ai_enabled: enabled, bf_ai_endpoint: endpoint, bf_ai_model: model, bf_ai_key: key });
+    message('Saved. AI advice never changes the local score or blocks a submission.');
+  } catch (error) { message(error.message, true); }
+  finally { el('saveBtn').disabled = false; }
 });
-
-document.getElementById("saveBtn").addEventListener("click", async () => {
-  const enabled = document.getElementById("aiEnabled").checked;
-  const endpoint = document.getElementById("aiEndpoint").value.trim();
-  const model = document.getElementById("aiModel").value.trim();
-  const key = document.getElementById("aiKey").value.trim();
-  const status = document.getElementById("saveStatus");
-
-  if (enabled && endpoint) {
-    let origin;
-    try { origin = new URL(endpoint).origin; } catch {
-      status.textContent = "Endpoint URL is invalid.";
-      status.style.color = "#b3261e";
-      return;
-    }
-    const granted = await chrome.permissions.request({ origins: [origin + "/*"] });
-    if (!granted) {
-      status.textContent = "Permission not granted — AI-assist stays off.";
-      status.style.color = "#b3261e";
-      await chrome.storage.local.set({ bf_ai_enabled: false });
-      return;
-    }
-  }
-
-  await chrome.storage.local.set({
-    bf_ai_enabled: enabled,
-    bf_ai_endpoint: endpoint,
-    bf_ai_model: model,
-    bf_ai_key: key
-  });
-  status.textContent = "Saved.";
-  status.style.color = "#2f7d4f";
-  setTimeout(() => (status.textContent = ""), 2000);
-});
-
-loadAll();
+el('clearNotices').addEventListener('click', () => save({ bf_rejected_settings: [] }).catch(e => message(e.message, true)));
+(async () => {
+  settings = await send({ type: 'GET_SETTINGS' }); renderLists();
+  el('aiEnabled').checked = settings.bf_ai_enabled;
+  el('aiEndpoint').value = settings.bf_ai_endpoint;
+  el('aiModel').value = settings.bf_ai_model;
+  el('aiKey').value = settings.bf_ai_key;
+})().catch(e => message(e.message, true));
