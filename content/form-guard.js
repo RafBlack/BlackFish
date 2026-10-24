@@ -19,12 +19,15 @@ export function installFormGuard({ doc, getContext, ready, requestDecision, repo
   const overrides = new WeakMap();
   let pending = null;
   const win = doc.defaultView;
+  const lifecycle = new win.AbortController();
+  let disposed = false;
   async function approveAndReplay(form, submitter, expected, ask) {
     if (ask) {
       const approved = await requestDecision(expected);
       if (!approved) return;
     }
     const context = getContext();
+    if (disposed || context.active === false) return;
     if (!form.isConnected || submitter && (!submitter.isConnected || submitter.form !== form)) return;
     const now = submissionRisk(form, submitter, context.brands, context.parentIdentity);
     if (!context.trusted && now.fingerprint !== expected.fingerprint) { void report(); return; }
@@ -35,10 +38,11 @@ export function installFormGuard({ doc, getContext, ready, requestDecision, repo
     } finally { overrides.delete(form); }
   }
   function listener(event) {
+    if (disposed) return;
     const form = event.composedPath().find(n => n instanceof win.HTMLFormElement);
     if (!form) return;
     const context = getContext();
-    if (context.trusted) return;
+    if (context.active === false || context.trusted) return;
     const risk = submissionRisk(form, event.submitter, context.brands, context.parentIdentity);
     if (!risk.credential) return;
     const override = overrides.get(form);
@@ -50,18 +54,19 @@ export function installFormGuard({ doc, getContext, ready, requestDecision, repo
     pending = (async () => {
       await ready();
       const freshContext = getContext();
+      if (disposed || freshContext.active === false) return;
       const fresh = submissionRisk(form, event.submitter, freshContext.brands, freshContext.parentIdentity);
       if (freshContext.trusted) return approveAndReplay(form, event.submitter, fresh, false);
       void report();
       return approveAndReplay(form, event.submitter, fresh, fresh.interrupt);
-    })().catch(error => console.warn('BlackFish could not resume this submission:', error.message)).finally(() => { pending = null; });
+    })().catch(error => { if (!disposed && getContext().active !== false) console.warn('BlackFish could not resume this submission:', error.message); }).finally(() => { pending = null; });
   }
   // Submit is not composed across shadow roots; attach to each discovered open root as well.
   const observed = new WeakSet();
   function observe(root) {
-    if (observed.has(root)) return;
-    observed.add(root); root.addEventListener('submit', listener, true);
+    if (disposed || observed.has(root)) return;
+    observed.add(root); root.addEventListener('submit', listener, { capture: true, signal: lifecycle.signal });
   }
   observe(doc);
-  return { observe };
+  return { observe, dispose: () => { disposed = true; lifecycle.abort(); } };
 }

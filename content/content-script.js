@@ -12,8 +12,30 @@ let config = { bf_allowlist: [], bf_custom_brands: [] }, brands = BF_BRANDS;
 let configToken = '', loaded = false, trusted = false, ownDocumentId = '';
 let generation = 0, revision = 0, lastVersion = -1, parentIdentity = [];
 let configRequest = 0;
-let trailing, maximum, stopped = false, loadPromise;
-const send = msg => chrome.runtime.sendMessage(msg);
+let trailing, maximum, discovery, stopped = false, disposed = false, loadPromise;
+const lifecycle = new AbortController();
+async function send(msg) {
+  if (!contextActive()) throw new Error('Extension context invalidated.');
+  try { return await chrome.runtime.sendMessage(msg); }
+  catch (error) {
+    if (error.message?.includes('Extension context invalidated')) dispose();
+    throw error;
+  }
+}
+function contextActive() {
+  if (disposed) return false;
+  try { if (chrome.runtime.id) return true; } catch {}
+  dispose();
+  return false;
+}
+function dispose() {
+  if (disposed) return;
+  disposed = true; stopped = true; generation++; configRequest++;
+  loaded = false; parentIdentity = []; evidence.clear();
+  clearTimeout(trailing); clearTimeout(maximum); clearInterval(discovery);
+  lifecycle.abort(); observer.disconnect(); guard.dispose(); overlay?.dispose();
+  try { chrome.runtime.onMessage.removeListener(onMessage); } catch {}
+}
 const effectiveUrl = () => /^https?:/.test(location.href) ? location.href : document.baseURI;
 const origin = () => { try { return new URL(effectiveUrl()).origin; } catch { return 'null'; } };
 const overlay = isTop ? createOverlay(document, async () => {
@@ -21,11 +43,11 @@ const overlay = isTop ? createOverlay(document, async () => {
   if (!reply?.ok) throw new Error(reply?.error || 'Trust update failed.');
   await refreshConfig(); await runScan();
 }) : null;
-function getContext() { return { loaded, trusted, brands, parentIdentity }; }
+function getContext() { return { active: contextActive(), loaded, trusted, brands, parentIdentity }; }
 async function refreshConfig() {
   const request = ++configRequest;
   const response = await send({ type: 'GET_SCAN_CONFIG' });
-  if (request !== configRequest) return;
+  if (!contextActive() || request !== configRequest) return;
   if (!response?.ok) throw new Error(response?.error || 'Cannot load detection settings.');
   config = response.settings; configToken = response.configToken;
   ownDocumentId = response.documentId;
@@ -41,7 +63,11 @@ function ready() {
 const guard = installFormGuard({
   doc: document, getContext, ready,
   requestDecision: async risk => {
-    const response = await send({ type: 'GUARD_REQUEST', configToken, fingerprint: risk.fingerprint, signals: risk.scored.signals, reason: risk.reason });
+    const response = await send({ type: 'GUARD_REQUEST', configToken, fingerprint: risk.fingerprint, signals: risk.scored.signals, reason: risk.reason }).catch(error => {
+      if (!/message (?:channel|port) closed before a response/i.test(error.message)) throw error;
+      overlay?.cancelPrompt();
+      return { approved: false };
+    });
     return response?.approved === true;
   },
   report: () => runScan()
@@ -54,12 +80,13 @@ async function report(state, coverage = {}) {
   return response;
 }
 function renderResult(result) {
-  if (result.documentId !== ownDocumentId || result.version < lastVersion) return;
+  if (!contextActive() || stopped || result.documentId !== ownDocumentId || result.version < lastVersion) return;
   lastVersion = result.version;
   parentIdentity = result.scored.signals.filter(s => s.category === 'identity' && s.frameId === 0);
   overlay?.render(result.scored, result.state, result.reputation);
 }
 async function runScan() {
+  if (stopped || !contextActive()) return { ok: false, inactive: true };
   const current = ++generation;
   try {
     await ready();
@@ -80,13 +107,14 @@ async function runScan() {
     await report('complete', dom.coverage);
     return { ok: true };
   } catch (error) {
+    if (stopped || !contextActive()) return { ok: false, inactive: true };
     console.warn('BlackFish scan failed:', error.message);
     try { await report('failed'); } catch {}
     return { ok: false, error: error.message };
   }
 }
 function schedule() {
-  if (stopped) return;
+  if (stopped || !contextActive()) return;
   clearTimeout(trailing);
   trailing = setTimeout(flush, 250);
   if (!maximum) maximum = setTimeout(flush, 1000);
@@ -104,27 +132,29 @@ function observe(root) {
     attributeFilter: ['action','method','target','enctype','formaction','formmethod','formtarget','formenctype','form','type','autocomplete','disabled','href','src','style','class','hidden','content'] });
 }
 observe(document);
-chrome.runtime.onMessage.addListener((msg, sender, respond) => {
-  if (sender.id !== chrome.runtime.id) return;
-  if (msg.type === 'RESCAN_REQUEST') { runScan().then(respond); return true; }
+function onMessage(msg, sender, respond) {
+  if (!contextActive() || sender.id !== chrome.runtime.id) return;
+  const reply = value => { if (contextActive()) respond(value); };
+  if (msg.type === 'RESCAN_REQUEST') { runScan().then(reply); return true; }
   if (msg.type === 'SETTINGS_CHANGED') {
     generation++; loaded = false; trusted = false; overlay?.clear(); loadPromise = null;
-    ready().then(runScan).then(respond).catch(e => respond({ ok: false, error: e.message })); return true;
+    ready().then(runScan).then(reply).catch(e => reply({ ok: false, error: e.message })); return true;
   }
   if (msg.type === 'VERDICT_UPDATE') {
     if (isTop) renderResult(msg.result);
     else parentIdentity = msg.result.scored.signals.filter(s => s.category === 'identity' && s.frameId === 0);
   }
   if (msg.type === 'GUARD_PROMPT' && isTop) {
-    if (msg.documentId !== ownDocumentId || trusted) { respond({ approved: false }); return; }
-    overlay.prompt({ key: msg.requestId, scored: msg.scored, reason: msg.reason, frameHost: msg.frameHost }).then(approved => respond({ approved }));
+    if (msg.documentId !== ownDocumentId || trusted) { reply({ approved: false }); return; }
+    overlay.prompt({ key: msg.requestId, scored: msg.scored, reason: msg.reason, frameHost: msg.frameHost }).then(approved => reply({ approved }));
     return true;
   }
-});
-document.addEventListener('DOMContentLoaded', () => void runScan(), { once: true });
-window.addEventListener('pageshow', event => { stopped = false; if (event.persisted) { loadPromise = null; void runScan(); } });
-window.addEventListener('pagehide', () => { stopped = true; generation++; overlay?.clear(); clearTimeout(trailing); clearTimeout(maximum); trailing = maximum = null; });
-document.addEventListener('visibilitychange', () => { if (!document.hidden) schedule(); });
+}
+chrome.runtime.onMessage.addListener(onMessage);
+document.addEventListener('DOMContentLoaded', () => void runScan(), { once: true, signal: lifecycle.signal });
+window.addEventListener('pageshow', event => { if (!contextActive()) return; stopped = false; if (event.persisted) { loadPromise = null; void runScan(); } }, { signal: lifecycle.signal });
+window.addEventListener('pagehide', () => { stopped = true; generation++; overlay?.clear(); clearTimeout(trailing); clearTimeout(maximum); trailing = maximum = null; }, { signal: lifecycle.signal });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) schedule(); }, { signal: lifecycle.signal });
 // Discover roots attached to an existing host (attachShadow itself emits no DOM mutation).
-setInterval(() => { if (!document.hidden && !trusted) schedule(); }, 15000);
+discovery = setInterval(() => { if (!contextActive()) return; if (!document.hidden && !trusted) schedule(); }, 15000);
 void runScan();

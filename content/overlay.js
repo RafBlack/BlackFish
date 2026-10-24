@@ -110,5 +110,6 @@ export function createOverlay(doc, onTrust) {
     return new Promise(resolve => { pendingResolve = resolve; });
   }
   function clear() { clearBanner(); settle(false); }
-  return { render, prompt, clear, isOwnNode: n => !!host && (n === host || host.contains(n)), cancelPrompt: () => settle(false) };
+  function dispose() { clear(); host?.remove(); host = null; root = null; }
+  return { render, prompt, clear, dispose, isOwnNode: n => !!host && (n === host || host.contains(n)), cancelPrompt: () => settle(false) };
 }
