@@ -24,6 +24,18 @@ test('stale revisions are rejected; documents reset; snapshots recover across re
   assert.equal(state.result(1).scored.score,0);
   assert.equal(state.result(1).state,'scanning');
 });
+test('identity and credentials in unrelated frames never corroborate or add their indices', () => {
+  const state=new DocumentState();
+  state.accept(1,top,frame,{revision:1,state:'complete',signals:[]});
+  state.accept(1,top,{frameId:1,documentId:'identity',url:'https://paypa1.com'},{revision:1,state:'complete',signals:[signal('homograph-domain','identity only')]});
+  state.accept(1,top,{frameId:2,documentId:'login',url:'https://login.example.org'},{revision:1,state:'complete',signals:[signal('credential-presence','password only')]});
+  const result=state.result(1);
+  assert.equal(result.scored.score,45);assert.equal(result.assessment.kind,'identity');
+  assert.deepEqual(result.assessment.frameIds,[1]);
+  assert.equal(result.scored.frameScores.find(f=>f.frameId===2).score,15);
+  const restored=new DocumentState(JSON.parse(JSON.stringify(state.serialize())));
+  assert.equal(restored.result(1).assessment.kind,'identity');
+});
 test('replacing a frame invalidates its descendants; trusting the main origin pauses all frames', () => {
   const state = new DocumentState(); state.accept(1,top,frame,{revision:1,state:'complete',signals:[]});
   state.accept(1,top,{frameId:1,parentFrameId:0,documentId:'c1',url:'https://a.test'},{revision:1,state:'complete',signals:suspicious});

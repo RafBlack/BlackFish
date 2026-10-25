@@ -32,7 +32,7 @@ test('candidate covers associated headings, legends, accessible names, OTP and o
     assert.equal(candidate.score,45,id);assert.equal(candidate.interrupted,false,id);
     const guard=await page.evaluate(()=>{
       const form=document.querySelector('form') || document.getElementById('widget').shadowRoot.querySelector('form');
-      const risk=BrandingTest.submissionRisk(form,null,BrandingTest.BF_BRANDS,[],{formContext:true});
+      const risk=BrandingTest.submissionRisk(form,null,BrandingTest.BF_BRANDS,{formContext:true});
       return {score:risk.scored.score,interrupted:risk.interrupt};
     });
     assert.deepEqual(guard,{score:45,interrupted:false},id);

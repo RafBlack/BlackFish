@@ -199,6 +199,41 @@ test('HTTP passwords are interrupted; cross-site HTTPS SSO alone is not interrup
   assert.equal((await treeText(sso)).includes('Check this credential submission'),false);
   await sso.close();
 });
+test('brand subdomain impersonation pauses credentials without needing URL keywords',async()=>{
+  const page=await open('https://paypal.attacker.com/',form);
+  const result=await complete(page);
+  assert.equal(result.scored.score,50);assert.equal(result.assessment.kind,'impersonation');
+  await page.locator('#submit').click();await dialog(page);
+  assert.equal(await page.evaluate(()=>window.submissions.length),0);
+  await cancel(page);await page.close();
+});
+test('HTTP sign-in codes receive the same one-time protection as passwords',async()=>{
+  const page=await open('http://otp.example.org/',form.replace('type="password"','type="text" autocomplete="one-time-code"'));
+  assert.equal((await complete(page)).assessment.kind,'transport');
+  await page.locator('#submit').click();await dialog(page);
+  assert.equal(await page.evaluate(()=>window.submissions.length),0);
+  await cancel(page);await page.locator('#submit').click();await dialog(page);
+  await proceed(page);await waitFor(()=>page.evaluate(()=>window.submissions.length===1),'single code submission');
+  await page.locator('#submit').click();await dialog(page);await cancel(page);await page.close();
+});
+test('unrelated identity and credential frames cannot corroborate or interrupt a legitimate embedded login',async()=>{
+  route('https://paypa1.com/identity-only',html('<p>No login here</p>'));
+  route('https://identity.example.net/embedded',html(form));
+  const page=await open('https://portal.example.org/frames','<iframe src="https://paypa1.com/identity-only"></iframe><iframe src="https://identity.example.net/embedded"></iframe>');
+  const result=await complete(page,s=>s.frameCount===3);
+  assert.equal(result.scored.score,45);assert.equal(result.assessment.kind,'identity');
+  const login=page.frame({url:'https://identity.example.net/embedded'});
+  await login.locator('#submit').click();await waitFor(()=>login.evaluate(()=>window.submissions.length===1),'unrelated frame submission');
+  assert.equal((await treeText(page)).includes('Check this credential submission'),false);
+  await page.close();
+  const wrapper=await open('https://paypa1.com/identity-wrapper','<iframe src="https://identity.example.net/embedded"></iframe>');
+  const wrapped=await complete(wrapper,s=>s.frameCount===2);
+  assert.equal(wrapped.scored.score,45);assert.equal(wrapped.assessment.kind,'identity');
+  const embedded=wrapper.frame({url:'https://identity.example.net/embedded'});
+  await embedded.locator('#submit').click();await waitFor(()=>embedded.evaluate(()=>window.submissions.length===1),'unrelated wrapper submission');
+  assert.equal((await treeText(wrapper)).includes('Check this credential submission'),false);
+  await wrapper.close();
+});
 
 test('base URLs, external form controls, submitter overrides, and displayed URL paths resolve correctly',async()=>{
   const body='<base href="https://identity.example.net/base/"><form id="login" action="login"></form><input name="password" type="password" form="login" value="fixture-only"><button id="submit" form="login" formaction="https://other.example.net/override">Sign in</button><a href="https://paypal.com/account">https://paypal.com/account</a><script>window.submissions=[];document.addEventListener("submit",e=>{e.preventDefault();window.submissions.push(e.submitter.formAction)});</script>';

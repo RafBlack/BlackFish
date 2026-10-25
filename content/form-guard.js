@@ -2,18 +2,18 @@ import { scanSingleForm, scanBrandMismatch } from './dom-scanner.js';
 import { bfAnalyzeUrl } from '../lib/heuristics/url-analysis.js';
 import { bfCheckLookalikeDomain } from '../lib/heuristics/lookalike-domain.js';
 import { bfAggregateScore, evidenceFingerprint } from '../lib/heuristics/score.js';
+import { credentialPolicy } from '../lib/assessment.js';
 
-export function submissionRisk(form, submitter, brands, parentIdentity = [], options = {}) {
+export function submissionRisk(form, submitter, brands, options = {}) {
   const analysis = scanSingleForm(form, submitter, brands);
   const url = bfAnalyzeUrl(form.ownerDocument.location.href);
   const identity = bfCheckLookalikeDomain(url.registrableDomain, url.hostname, brands);
   const title = scanBrandMismatch(form.ownerDocument, url.hostname, analysis.credential, brands, { ...options, form });
-  const scored = bfAggregateScore([url.signals, identity, title, parentIdentity, analysis.signals]);
-  const strongIdentity = scored.signals.some(s => s.category === 'identity' && s.weight >= 35);
-  const insecurePassword = analysis.password && analysis.signals.some(s => s.id === 'insecure-credential-form');
-  const interrupt = analysis.destination?.method !== 'dialog' && (insecurePassword || analysis.credential && strongIdentity && scored.level === 'HIGH');
+  const scored = bfAggregateScore([url.signals, identity, title, analysis.signals]);
+  const policy = credentialPolicy(scored.signals);
+  const interrupt = analysis.destination?.method !== 'dialog' && (policy.insecure || policy.impersonation);
   const fingerprint = [analysis.destination?.fingerprint, evidenceFingerprint(scored), analysis.password, analysis.credential].join('|');
-  return { ...analysis, scored, interrupt, fingerprint, reason: insecurePassword ? 'This password is entered or submitted over an insecure connection.' : 'Strong impersonation indicators accompany credential collection on this page.' };
+  return { ...analysis, scored, interrupt, fingerprint, reason: policy.insecure ? 'This password or sign-in code is entered or submitted over an insecure or unsupported connection.' : 'Strong domain impersonation indicators accompany credential collection in this document.' };
 }
 export function installFormGuard({ doc, getContext, ready, requestDecision, report }) {
   const overrides = new WeakMap();
@@ -29,7 +29,7 @@ export function installFormGuard({ doc, getContext, ready, requestDecision, repo
     const context = getContext();
     if (disposed || context.active === false) return;
     if (!form.isConnected || submitter && (!submitter.isConnected || submitter.form !== form)) return;
-    const now = submissionRisk(form, submitter, context.brands, context.parentIdentity);
+    const now = submissionRisk(form, submitter, context.brands);
     if (!context.trusted && now.fingerprint !== expected.fingerprint) { void report(); return; }
     overrides.set(form, { submitter, fingerprint: now.fingerprint, trusted: context.trusted, expires: performance.now() + 100 });
     try {
@@ -43,7 +43,7 @@ export function installFormGuard({ doc, getContext, ready, requestDecision, repo
     if (!form) return;
     const context = getContext();
     if (context.active === false || context.trusted) return;
-    const risk = submissionRisk(form, event.submitter, context.brands, context.parentIdentity);
+    const risk = submissionRisk(form, event.submitter, context.brands);
     if (!risk.credential) return;
     const override = overrides.get(form);
     overrides.delete(form); // consumed even if the form changed
@@ -55,7 +55,7 @@ export function installFormGuard({ doc, getContext, ready, requestDecision, repo
       await ready();
       const freshContext = getContext();
       if (disposed || freshContext.active === false) return;
-      const fresh = submissionRisk(form, event.submitter, freshContext.brands, freshContext.parentIdentity);
+      const fresh = submissionRisk(form, event.submitter, freshContext.brands);
       if (freshContext.trusted) return approveAndReplay(form, event.submitter, fresh, false);
       void report();
       return approveAndReplay(form, event.submitter, fresh, fresh.interrupt);
