@@ -76,7 +76,7 @@ test('confirmed memory warns without adding score or interrupting a clean same-s
   const page=await open(url,form);
   const verdict=await until(async()=>{const s=await status(page);return s.reputation?.status==='confirmed'&&s;});
   assert.equal(verdict.scored.score,15);assert.equal(verdict.scored.level,'LOW');
-  await until(async()=>(await text(page)).includes('PREVIOUSLY CONFIRMED PHISHING'));
+  await until(async()=>(await text(page)).includes('Previously confirmed phishing'));
   await page.locator('#submit').click();assert.equal(await page.evaluate(()=>window.submissions),1);
   assert.equal((await text(page)).includes('Check this credential submission'),false);
   const urlHash=await digest(url),payload=requests.find(request=>request.body?.urlHash===urlHash);
@@ -85,13 +85,15 @@ test('confirmed memory warns without adding score or interrupting a clean same-s
   const tabId=await idFor(page),popup=await context.newPage();
   await popup.addInitScript(tabId=>{chrome.tabs.query=async()=>[{id:tabId}];},tabId);await popup.setViewportSize({width:400,height:600});
   await popup.goto('chrome-extension://'+extensionId+'/popup/popup.html');await popup.locator('#reputationPanel').waitFor({state:'visible'});
-  assert.equal(await popup.locator('#scoreNum').textContent(),'15');assert.equal(await popup.locator('#levelLabel').textContent(),'No strong phishing indicators detected');
+  assert.equal(await popup.locator('#scoreNum').textContent(),'15');assert.equal(await popup.locator('#levelLabel').textContent(),'Previously confirmed phishing');
+  assert.equal(await popup.locator('#scoreNum').isVisible(),false);
+  assert.equal((await popup.locator('#verdict').innerText()).includes('No strong'),false);
   await popup.screenshot({path:path.join(root,'test-results/cloud-popup.png'),fullPage:true});await popup.close();
   await page.close();
 });
 test('hash scopes, trusted origins and private addresses prevent unintended shared warnings or traffic',async()=>{
   const page=await open('https://known.example.com/login?campaign=two');
-  await until(async()=>(await status(page)).reputation?.status==='unknown');assert.equal((await text(page)).includes('PREVIOUSLY CONFIRMED PHISHING'),false);
+  await until(async()=>(await status(page)).reputation?.status==='unknown');assert.equal((await text(page)).includes('Previously confirmed phishing'),false);
   await save({bf_allowlist:['https://trusted.example.com']});
   const before=requests.length;
   const trusted=await context.newPage();await trusted.goto('https://trusted.example.com/');await until(async()=>(await status(trusted)).state==='trusted');
@@ -104,7 +106,7 @@ test('responses for an old SPA URL never alter the newer page',async()=>{
   await page.evaluate(()=>history.pushState({},'', '/new'));await complete(page);
   releaseDelay();delayed=null;releaseDelay=null;
   await until(async()=>(await status(page)).reputation?.status==='unknown');
-  assert.equal((await text(page)).includes('PREVIOUSLY CONFIRMED PHISHING'),false);await page.close();
+  assert.equal((await text(page)).includes('Previously confirmed phishing'),false);await page.close();
 });
 test('browser-provided incognito status excludes automatic cloud traffic',async()=>{
   await worker.evaluate(()=>{globalThis.originalTabGet=chrome.tabs.get;chrome.tabs.get=async tabId=>({...await globalThis.originalTabGet(tabId),incognito:true});});

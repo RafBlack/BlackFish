@@ -129,12 +129,12 @@ async function publish(tabId) {
   if (!result) return;
   await persist();
   scheduleExpiry();
-  const confirmed = result.reputation.status === 'confirmed';
-  const text = confirmed ? '!' : result.state === 'failed' ? '?' : result.state === 'trusted' || result.scored.level === 'LOW' ? '' : String(result.scored.score);
+  const assessment = result.assessment;
+  const text = assessment.alert ? '!' : result.state === 'failed' ? '?' : '';
   try {
     await chrome.action.setBadgeText({ tabId, text });
-    await chrome.action.setBadgeBackgroundColor({ tabId, color: confirmed || result.scored.level === 'HIGH' ? '#b3261e' : '#a66a00' });
-    await chrome.action.setTitle({ tabId, title: 'BlackFish: ' + (confirmed ? 'Previously confirmed phishing' : result.state === 'trusted' ? 'trusted site' : result.state + ', risk indicator ' + result.scored.score) });
+    await chrome.action.setBadgeBackgroundColor({ tabId, color: assessment.severity === 'danger' ? '#b3261e' : '#a66a00' });
+    await chrome.action.setTitle({ tabId, title: 'BlackFish: ' + assessment.title + '. ' + result.state + (result.truncated ? ', partial coverage' : '') });
   } catch {}
   // Do not await a content scan inside the state queue: it reports back through that queue.
   for (const frame of Object.values(tab.frames)) void sendDocument(tabId, frame.documentId, { type: 'VERDICT_UPDATE', result });

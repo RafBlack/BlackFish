@@ -33,12 +33,15 @@ export function mountBrand(doc) {
   for (const slot of doc.querySelectorAll('[data-xelu-mascot]')) slot.replaceChildren(createXelu(doc));
   for (const slot of doc.querySelectorAll('[data-xelu-mark]')) slot.replaceChildren(createMark(doc));
 }
-export function xeluMessage(state, level) {
+export function xeluMessage(state, assessment = {}) {
   if (state === 'trusted') return "you've trusted this site.";
   if (state === 'unsupported') return "can't scan this page.";
   if (state === 'failed') return "scan failed. let's try again.";
   if (state === 'scanning') return 'one moment. checking...';
-  if (level === 'HIGH') return "hold up. don't take the bait.";
-  if (level === 'MEDIUM') return 'something feels off here.';
+  if (assessment.kind === 'confirmed') return "i've seen this bait before.";
+  if (assessment.severity === 'danger') return "hold up. check before sending.";
+  if (assessment.severity === 'warning') return 'check that address first.';
+  if (assessment.kind === 'destination') return 'check where your login goes.';
+  if (assessment.kind === 'link') return 'check that link destination.';
   return 'no strong signals. stay sharp.';
 }

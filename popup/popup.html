@@ -14,18 +14,19 @@
   <section class="scan-panel">
     <section id="reputationPanel" class="reputation-panel" role="status" hidden><span class="micro-label">SHARED THREAT MEMORY</span><strong>Previously confirmed phishing</strong><p id="reputationDetails"></p></section>
     <div id="verdict" class="verdict low" role="status" aria-live="polite">
-      <div class="verdict-copy"><span class="micro-label">LOCAL HEURISTICS</span><div id="levelLabel">Checking...</div><div id="hostLabel" class="host"></div></div>
-      <div class="score-box" aria-label="Local risk indicator"><span id="scoreNum">-</span><span>/ 100</span></div>
+      <div class="verdict-copy"><span class="micro-label">CREDENTIAL-PHISHING CHECKS</span><div id="levelLabel">Checking...</div><div id="hostLabel" class="host"></div></div>
     </div>
+    <p id="actionLabel" class="empty"></p>
     <p class="empty coverage"><strong id="coverageStatus" role="status">Waiting for credential-phishing scan</strong><span id="coverageNotice"></span></p>
     <div class="evidence-heading"><span class="eyebrow">What Xelu noticed</span><span class="local-tag">LOCAL SCAN</span></div>
     <ul id="reasonList" aria-label="Detection evidence"></ul>
     <p id="emptyState" class="empty"></p>
+    <details id="technicalDetails"><summary>Technical evidence</summary><p>Experimental heuristic index: <span id="scoreNum">-</span>. Hand-set weights; not a probability, CVSS rating, or calibrated risk. The page index is the highest individual frame index; frame totals are never added together. Actions follow evidence policy, not index thresholds.</p><ul id="technicalList"></ul></details>
     <p id="reputationNote" class="empty" role="status"></p>
     <div class="actions"><button id="rescanBtn" class="primary">Rescan page</button><button id="trustBtn" class="quiet">Trust this site</button></div>
     <button id="reportBtn" class="quiet report-button" type="button">Report this page</button>
   </section>
 </main>
-<footer class="popup-footer"><span>built by <a href="https://github.com/RafBlack/xelulabs" target="_blank" rel="noopener noreferrer">xelulabs</a></span><span class="status-dot">local first</span><p>Risk indicator, not a guarantee of safety.</p><p id="aiNote"></p></footer>
+<footer class="popup-footer"><span>built by <a href="https://github.com/RafBlack/xelulabs" target="_blank" rel="noopener noreferrer">xelulabs</a></span><span class="status-dot">local first</span><p>Evidence-based checks, not a guarantee of safety.</p><p id="aiNote"></p></footer>
 <dialog id="reportDialog" aria-labelledby="reportTitle"><h2 id="reportTitle">Review your report</h2><p>This exact address, including its query, will be sent to XeluLabs for human review. Query strings can contain private information. Cancel if this address contains a token or personal data.</p><label for="reportUrl">Address to share</label><textarea id="reportUrl" readonly rows="4"></textarea><label class="report-consent"><input id="reportConsent" type="checkbox"> I agree to human review and reuse of minimized detection features in reviewed examples. A report is not a confirmed threat.</label><div class="actions"><button id="cancelReport" class="quiet" type="button">Cancel</button><button id="confirmReport" class="primary" type="button" disabled>Send report</button></div><p id="reportStatus" role="status"></p></dialog>
 <script src="../dist/popup/popup.js"></script></body></html>

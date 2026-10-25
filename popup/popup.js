@@ -15,16 +15,16 @@ function render(result) {
   documentId = result.documentId; version = result.version ?? 0;
   const state = result.state;
   const scored = result.scored;
+  const assessment = assessEvidence(result);
   document.getElementById('coverageStatus').textContent = coverageLabel(result);
-  document.getElementById('xeluLine').textContent = xeluMessage(state, scored?.level);
-  verdictEl.className = 'verdict ' + (scored?.level.toLowerCase() || 'low');
+  document.getElementById('xeluLine').textContent = xeluMessage(state, assessment);
+  verdictEl.className = 'verdict ' + ({ danger: 'high', warning: 'medium' }[assessment.severity] || 'low');
   score.textContent = ['unsupported','failed','trusted'].includes(state) ? '-' : String(scored?.score ?? '-');
-  level.textContent = {
-    unsupported: 'Page cannot be scanned', failed: 'Scan failed', scanning: 'Scanning...',
-    trusted: 'Trusted site: protection paused'
-  }[state] || { LOW: 'No strong phishing indicators detected', MEDIUM: 'Risk indicators detected', HIGH: 'High phishing risk' }[scored?.level] || 'Waiting for scan';
+  level.textContent = assessment.title;
+  document.getElementById('actionLabel').textContent = assessment.action;
   try { host.textContent = new URL(result.url).hostname; } catch { host.textContent = ''; }
   reasons.replaceChildren();
+  document.getElementById('technicalList').replaceChildren();
   for (const s of scored?.signals || []) {
     const li = document.createElement('li');
     const copy = document.createElement('span');
@@ -34,11 +34,13 @@ function render(result) {
       meta.textContent = [s.frameId ? 'frame: ' + s.frameHost : '', s.occurrences > 1 ? 'Repeated evidence counted once' : ''].filter(Boolean).join(' / ');
       copy.append(meta);
     }
-    const points = document.createElement('span'); points.className = 'reason-points';
-    points.textContent = s.contribution > 0 ? '+' + s.contribution : 'info';
-    points.setAttribute('aria-label', s.contribution + ' score points');
-    li.append(copy, points);
+    const category = document.createElement('span'); category.className = 'reason-points';
+    category.textContent = s.category;
+    li.append(copy, category);
     reasons.append(li);
+    const technical = document.createElement('li');
+    technical.textContent = s.id + ': +' + s.contribution + ' in frame ' + (s.frameId ?? 0) + (s.frameHost ? ' (' + s.frameHost + ')' : '') + '. ' + s.occurrences + ' observation(s); counted once per frame.';
+    document.getElementById('technicalList').append(technical);
   }
   const text = [];
   if (state === 'unsupported') text.push('Browser pages, the Web Store, and some viewers do not permit scanning.');
@@ -51,12 +53,11 @@ function render(result) {
   const ai = result.ai || { status: 'off' };
   aiNote.textContent = ai.status === 'complete' ? 'Experimental AI advice: ' + (ai.escalate ? 'additional concern. ' : 'no additional concern. ') + ai.reason : 'AI advice: ' + ai.status + '.';
   const reputation = result.reputation || { status: 'off' };
-  const confirmed = reputation.status === 'confirmed';
+  const confirmed = assessment.kind === 'confirmed';
   document.getElementById('reputationPanel').hidden = !confirmed;
   document.getElementById('reputationDetails').textContent = confirmed ? reputation.provenance + ' Match: ' + reputation.scope + '. Review expires ' + new Date(reputation.expiresAt).toLocaleString() + '.' : '';
   document.getElementById('reputationNote').hidden = confirmed;
   document.getElementById('reputationNote').textContent = 'Shared threat memory: ' + reputation.status + '. Unknown is not a safe verdict.';
-  if (confirmed) document.getElementById('xeluLine').textContent = "i've seen this bait before.";
   trust.disabled = ['unsupported','trusted','failed'].includes(state);
   rescan.disabled = state === 'unsupported';
   document.getElementById('reportBtn').disabled = ['unsupported','trusted','failed'].includes(state);
@@ -64,6 +65,11 @@ function render(result) {
 async function request(type) { return chrome.runtime.sendMessage({ type, tabId }); }
 function showFailure(message) {
   level.textContent = 'Scan failed'; score.textContent = '-';
+  verdictEl.className = 'verdict low';
+  document.getElementById('actionLabel').textContent = 'No current assessment is available. Reload the page and try again.';
+  document.getElementById('xeluLine').textContent = xeluMessage('failed');
+  document.getElementById('reputationPanel').hidden = true;
+  reasons.replaceChildren(); document.getElementById('technicalList').replaceChildren();
   document.getElementById('coverageStatus').textContent = coverageLabel({ state: 'failed' });
   trust.disabled = true; document.getElementById('reportBtn').disabled = true;
   note.hidden = false; note.textContent = message;
@@ -117,5 +123,6 @@ window.addEventListener('pagehide', () => { disposed = true; });
 })().catch(error => { showFailure(error.message); });
 import { mountBrand, xeluMessage } from '../ui/brand.js';
 import { COVERAGE_NOTICE, coverageLabel } from '../ui/coverage.js';
+import { assessEvidence } from '../lib/assessment.js';
 mountBrand(document);
 document.getElementById('coverageNotice').textContent = COVERAGE_NOTICE;

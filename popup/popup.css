@@ -15,10 +15,12 @@ body{max-height:600px;overflow-x:hidden;overflow-y:auto;background:var(--bg)}
 .micro-label{display:block;margin-bottom:6px;color:var(--dim);font-size:8px;letter-spacing:.15em}
 #levelLabel{font-family:var(--sans);font-size:17px;font-weight:400;line-height:1.25;color:var(--ink)}
 .host{margin-top:6px;color:var(--muted);font-size:10px;overflow-wrap:anywhere}
-.score-box{flex:none;display:flex;flex-direction:column;align-items:flex-end;line-height:1}
-#scoreNum{font-family:var(--pixel);font-size:28px;color:var(--cyan)}
-.score-box>span:last-child{margin-top:6px;color:var(--dim);font-size:9px}
-.medium #scoreNum{color:var(--amber)}.high #scoreNum{color:var(--red)}
+#technicalDetails{margin-top:14px;color:var(--muted);font-size:10px;line-height:1.7;overflow-wrap:anywhere}
+#technicalDetails summary{cursor:pointer;color:var(--cyan);padding:7px 0}
+#technicalDetails p{margin:8px 0}
+#technicalList{padding-left:16px}
+#technicalList li{margin:5px 0}
+#scoreNum{color:var(--ink)}
 .evidence-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:16px;margin-bottom:8px}
 .evidence-heading .eyebrow{font-size:9px;letter-spacing:.08em}
 .evidence-heading .eyebrow::before{width:12px}

@@ -10,7 +10,7 @@ const isTop = window === window.top;
 const evidence = new EvidenceStore();
 let config = { bf_allowlist: [], bf_custom_brands: [] }, brands = BF_BRANDS;
 let configToken = '', loaded = false, trusted = false, ownDocumentId = '';
-let generation = 0, revision = 0, lastVersion = -1, parentIdentity = [];
+let generation = 0, revision = 0, lastVersion = -1;
 let configRequest = 0;
 let trailing, maximum, discovery, stopped = false, disposed = false, loadPromise;
 const lifecycle = new AbortController();
@@ -32,7 +32,7 @@ function contextActive() {
 function dispose() {
   if (disposed) return;
   disposed = true; stopped = true; generation++; configRequest++;
-  loaded = false; parentIdentity = []; evidence.clear();
+  loaded = false; evidence.clear();
   clearTimeout(trailing); clearTimeout(maximum); clearInterval(discovery);
   lifecycle.abort(); observer.disconnect(); guard.dispose(); overlay?.dispose();
   try { chrome.runtime.onMessage.removeListener(onMessage); } catch {}
@@ -44,7 +44,7 @@ const overlay = isTop ? createOverlay(document, async () => {
   if (!reply?.ok) throw new Error(reply?.error || 'Trust update failed.');
   await refreshConfig(); await runScan();
 }) : null;
-function getContext() { return { active: contextActive(), loaded, trusted, brands, parentIdentity }; }
+function getContext() { return { active: contextActive(), loaded, trusted, brands }; }
 async function refreshConfig() {
   const request = ++configRequest;
   const response = await send({ type: 'GET_SCAN_CONFIG' });
@@ -55,7 +55,7 @@ async function refreshConfig() {
   brands = brandsWithCustom(config.bf_custom_brands);
   trusted = response.topTrusted || config.bf_allowlist.includes(origin());
   loaded = true;
-  if (trusted) { evidence.clear(); parentIdentity = []; overlay?.clear(); }
+  if (trusted) { evidence.clear(); overlay?.clear(); }
 }
 function ready() {
   if (!loadPromise) loadPromise = refreshConfig().catch(error => { loadPromise = null; throw error; });
@@ -83,8 +83,7 @@ async function report(state, coverage = {}) {
 function renderResult(result) {
   if (!contextActive() || stopped || result.documentId !== ownDocumentId || result.version < lastVersion) return;
   lastVersion = result.version;
-  parentIdentity = result.scored.signals.filter(s => s.category === 'identity' && s.frameId === 0);
-  overlay?.render(result.scored, result.state, result.reputation, result.truncated);
+  overlay?.render(result);
 }
 async function runScan() {
   if (stopped || !contextActive()) return { ok: false, inactive: true };
@@ -144,7 +143,6 @@ function onMessage(msg, sender, respond) {
   }
   if (msg.type === 'VERDICT_UPDATE') {
     if (isTop) renderResult(msg.result);
-    else parentIdentity = msg.result.scored.signals.filter(s => s.category === 'identity' && s.frameId === 0);
   }
   if (msg.type === 'GUARD_PROMPT' && isTop) {
     if (msg.documentId !== ownDocumentId || trusted) { reply({ approved: false }); return; }
