@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Installation and troubleshooting
+    url: https://github.com/RafBlack/BlackFish/blob/main/README.md#get-started
+    about: Build, load, update, and troubleshoot the unpacked extension.
+  - name: Privacy and optional services
+    url: https://github.com/RafBlack/BlackFish/blob/main/PRIVACY.md
+    about: Understand local storage, consent, reporting, and cloud data flows.

@@ -1,0 +1,56 @@
+name: Detection feedback
+description: Report a false warning, missed indicator, or unexpected submission pause.
+title: "detection: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        BlackFish checks login and credential phishing. TLS errors, malware, and AMTSO's agreed test URL are outside its current scope.
+        This public issue does not submit a page to the invited reputation service or confirm it as a threat. Use sanitized, controlled examples; never share real credentials or token-bearing URLs.
+        For a vulnerability in BlackFish itself, follow the private-reporting guidance in CONTRIBUTING.md.
+  - type: dropdown
+    id: category
+    attributes:
+      label: What happened?
+      options:
+        - A legitimate page received a warning
+        - A legitimate submission was paused
+        - A credential-phishing indicator was missed
+        - The finding or scan coverage was unclear
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Observed behavior and evidence
+      description: Explain the expected finding, actual warning, scan status, and rule IDs from Technical evidence. Describe why the page is legitimate or what impersonation or transport evidence was missed.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Controlled reproduction
+      description: Prefer minimal HTML using reserved example domains and fixture-only field values. Describe the credential fields, form destination, frames or shadow roots, and steps that reproduce the result. Avoid live suspicious links.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Versions and operating system
+      description: Include BlackFish version or commit, Chrome version, and operating system.
+    validations:
+      required: true
+  - type: textarea
+    id: settings
+    attributes:
+      label: Relevant settings
+      description: Mention custom protected domains, whether the origin was trusted, and which optional services were enabled. Never include keys, invitation tokens, or exported settings containing credentials.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Before submitting
+      options:
+        - label: I removed credentials, tokens, private addresses, and personal information.
+          required: true
+        - label: I refreshed the affected tab after reloading BlackFish and checked its documented scope and existing issues.
+          required: true

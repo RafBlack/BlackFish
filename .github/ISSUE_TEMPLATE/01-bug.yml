@@ -1,0 +1,49 @@
+name: Bug report
+description: Report a broken interface, scan failure, or extension behavior.
+title: "bug: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use Detection feedback for false warnings or missed credential-phishing indicators.
+        Issues are public. Remove passwords, API keys, invitation tokens, private URLs, and account details from all examples and screenshots.
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+      description: Explain what you expected and what BlackFish did instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include a minimal controlled example when possible.
+      placeholder: |
+        1. Build and reload BlackFish.
+        2. Open the controlled example.
+        3. Open the popup or submit the test form.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Versions and operating system
+      description: BlackFish version or commit, Chrome version, and operating system. For backend issues, include Node and Wrangler versions.
+      placeholder: "BlackFish 0.2.0 / Chrome version / Windows, macOS, or Linux"
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Sanitized diagnostics
+      description: Include scan status, relevant rule IDs, and console errors. Mention whether optional services or exact-origin trust were enabled. Review screenshots before attaching them.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Before submitting
+      options:
+        - label: I removed credentials, tokens, private addresses, and personal information.
+          required: true
+        - label: I reproduced the problem with the current build or relevant backend tooling and checked existing issues.
+          required: true
