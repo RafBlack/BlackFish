@@ -71,6 +71,8 @@ One request per document/evidence fingerprint, one in-flight request per tab, at
 
 ## Validation
 
+The popup, settings and warnings distinguish credential-phishing coverage from general web security. TLS certificates, non-credential mixed content and malware are not assessed. AMTSO's agreed phishing-test URL is unsupported; no test-domain exception is used to simulate detection. See the [manual test matrix](evaluation/MANUAL-TESTS.md) for AMTSO, BadSSL and supported credential cases.
+
     npm test
     npx playwright install chromium
     npm run test:browser
@@ -79,6 +81,8 @@ One request per document/evidence fingerprint, one in-flight request per tab, at
 Browser tests use Playwright's bundled Chromium in a fresh headless profile. All HTTP(S) page resources are fulfilled from controlled fixtures. They do not contact live phishing sites or submit real credentials. Screenshots are written to test-results/.
 
 The corpus has 200 benign and 100 phishing synthetic scenarios. Tuning/evaluation domains and template families are disjoint, but parameter variants within a family are correlated. See evaluation/latest-report.json and evaluation/README.md. These tests do not establish real-world accuracy.
+
+Run `npm run evaluate:branding` for the separate form-context candidate. It reads visible form-associated headings, legends and accessible names within 100 elements and 1,000 text characters, with one credential form per container. It shares the existing 30-point brand mismatch and guard policy, so repeated title/heading/logo evidence cannot stack and a heading alone cannot authorize an interruption. Logo text alone is insufficient. The candidate is disabled: it detects extra synthetic phishing cases but also introduces a benign enterprise-login warning. Coverage clarity ships independently; live rules, AI version/payload/trigger and cloud permissions remain unchanged. See [candidate measurements](evaluation/form-branding-report.json); these are synthetic regressions, not independent accuracy evidence.
 
 To compare offline AI advice:
 
