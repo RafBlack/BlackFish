@@ -1,6 +1,6 @@
 # Manual test matrix
 
-BlackFish assesses credential-phishing indicators. A LOW result does not assess TLS certificates, non-credential mixed content, malware, or download safety. A risk indicator is not a phishing probability.
+BlackFish assesses credential-phishing indicators. An absence of strong indicators does not assess TLS certificates, non-credential mixed content, malware, or download safety. The optional technical index is not a phishing probability, CVSS rating, or calibrated risk.
 
 Build with `npm run build`, reload the unpacked extension, and refresh existing tabs. Keep cloud features and AI off for the local baseline. Use only placeholder values in controlled fixtures; submission protection is verified by the browser tests without contacting remote collection endpoints.
 

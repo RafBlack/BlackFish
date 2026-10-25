@@ -1,6 +1,6 @@
 # BlackFish personal beta (0.2.0)
 
-BlackFish detects signs of login and credential phishing using local, explainable URL and DOM analysis. AI is disabled by default and provides optional advice only. A score is a risk indicator, not a phishing probability or a guarantee of safety.
+BlackFish detects signs of login and credential phishing using local, explainable URL and DOM analysis. AI is disabled by default and provides optional advice only. Findings describe observed evidence and an action; the experimental numeric index is available in technical details, not a probability, CVSS rating, or calibrated risk assessment.
 
 The interface follows xelulabs' original visual identity: Xelu's pixel-art mascot, the Xelu mark, dark dot-grid surfaces, terminal typography, and square speech bubbles. Xelu appears in the popup, page banners, full submission warnings, and settings. All art and fonts are packaged locally. See DESIGN.md and assets/SOURCE.md for the reference and attribution. To regenerate the toolbar PNG icons from the original SVG mark, run node scripts/brand-icons.mjs.
 
@@ -21,11 +21,11 @@ If Chrome reports "Failed to resolve module specifier tldts" or service-worker r
 
 URL checks run as soon as the worker returns the exact-origin trust configuration. DOM scans cover visible password fields and explicit autocomplete="one-time-code" fields, form destinations, declared branding, displayed link destinations, and contextual iframe/download information. Open shadow roots and externally associated form controls are included within scan limits.
 
-Each source replaces its previous snapshot. Rule IDs contribute once across elements and frames. Related impersonation rules contribute only their strongest weight; all weak supporting indicators together contribute at most 20. MEDIUM starts at 30; HIGH at 55. The popup displays actual contributions and frame attribution. Removing evidence lowers the score. Internationalized domains, hidden fields, hidden iframes, and executable links do not independently imply phishing.
+Each source replaces its previous snapshot. Within a document, rule IDs contribute once across elements. Related impersonation rules contribute only their strongest weight; weak support totals at most 20. Frames are assessed separately: identity in one cannot corroborate credentials in another, and their indices are never added together. The page index is the highest individual frame index. Removing evidence lowers it. Internationalized domains, hidden fields, hidden iframes, and executable links do not independently imply phishing. See the [evidence policy, full weight table and primary sources](evaluation/SCORING.md) for the rationale and limits.
 
 Domain boundaries use bundled tldts with private suffixes enabled, so separate github.io tenants are separate sites. IDNs are decoded with Punycode.js and compared using pinned Unicode 17 confusable skeleton data. Approved brand families are explicit identity references, not unconditional exemptions from other checks.
 
-The guard interrupts supported submit events for insecure password entry/transport or strong domain impersonation corroborated by credential collection and a HIGH score. A cross-site HTTPS destination alone warns; it does not interrupt. Approval is scoped to one form, submitter, inspected destination, and evidence fingerprint. Cancel grants no approval. Resumption uses requestSubmit to preserve validation, submitter data, and site handlers.
+The guard pauses supported submit events for insecure password or explicit sign-in-code transport, or strong domain impersonation with credential collection in that same document. These are explicit evidence policies, independent of numeric cutoffs. A title/metadata claim alone does not authorize interruption. A cross-site HTTPS destination alone produces a passive popup notice, without an alarming badge, page banner or interruption. Approval is scoped to one form, submitter, inspected destination, and evidence fingerprint. Cancel grants no approval. Resumption uses requestSubmit to preserve validation, submitter data, and site handlers.
 
 ## Document state and scanning
 
@@ -51,7 +51,7 @@ The extension now includes optional shared reputation, explicit reports, and man
 
 Lookups use the hostname and SHA-256 hash of the exact browser-normalized address, preserving its query and excluding its fragment. Only an explicitly confirmed report sends the raw displayed address for human review. Reviewed threats can match an exact link or an explicitly approved exact hostname; they do not expand to parent domains, other paths, subdomains, or hosted tenants. A hostname record intentionally covers that reviewed hostname's paths. Confirmed records expire within 24 hours and clients require refresh within 15 minutes. Unknown or unavailable records are never safe verdicts.
 
-A confirmed match produces a separate popup/badge/page warning as navigation opens; page loading is not blocked. It adds no heuristic points and cannot trigger or authorize the submission guard. Only the top document is checked by shared reputation in this beta; local analysis still covers embedded frames. Automatic cloud traffic excludes trusted origins, incognito, local/private addresses and intranet names. Public hostnames that point to private services require the user's trust setting; the client does not resolve them.
+A fresh confirmed match takes priority in the main popup assessment and produces a badge/page warning as navigation opens, even with a zero local index; page loading is not blocked. It adds no heuristic points and cannot trigger or authorize the submission guard. Only the top document is checked by shared reputation in this beta; local analysis still covers embedded frames. Automatic cloud traffic excludes trusted origins, incognito, local/private addresses and intranet names. Public hostnames that point to private services require the user's trust setting; the client does not resolve them.
 
 Threat, advice and capability caches share a persistent 3 MiB/5,000-entry limit, with expiry and least-recently-used eviction. Clear them in Settings without removing preferences or credentials. AI advice keys include normalized evidence, provider/model, rules, prompt and reviewed-example versions; in-flight and old-document results cannot update a newer page. Personal/local AI configuration is retained, and providers are enabled explicitly rather than falling back automatically.
 
@@ -63,7 +63,7 @@ Managed AI remains behind a closed evaluation gate. `backend/evaluation/reviewed
 
 ## Experimental AI
 
-AI advice appears only in the popup. It adds no score and cannot block, approve, or suppress a submission. Live metadata is limited to hostname, matched rule IDs, and credential presence. Raw titles, full URLs, page text, HTML, field values, and credentials are excluded. Hostnames can still reveal browsing interests. Keys remain in this browser profile and are not encrypted in a secrets vault.
+AI advice appears only in the popup. It adds no score and cannot block, approve, or suppress a submission. Live metadata and the 20–54 eligibility index use only the top document's hostname, rule IDs, and credential presence; unrelated child evidence is excluded. Raw titles, full URLs, page text, HTML, field values, and credentials are excluded. Hostnames can still reveal browsing interests. Keys remain in this browser profile and are not encrypted in a secrets vault.
 
 Only configured xAI HTTPS or HTTP localhost/127.0.0.1 OpenAI-compatible endpoints are supported. A model name is required; local models may omit a key. Permission is requested when saving enabled AI. Responses require a real boolean and a reason of at most 300 characters. The three-second deadline covers reading and parsing at most 16 KiB. Redirected API requests fail.
 
@@ -82,7 +82,7 @@ Browser tests use Playwright's bundled Chromium in a fresh headless profile. All
 
 The corpus has 200 benign and 100 phishing synthetic scenarios. Tuning/evaluation domains and template families are disjoint, but parameter variants within a family are correlated. See evaluation/latest-report.json and evaluation/README.md. These tests do not establish real-world accuracy.
 
-Run `npm run evaluate:branding` for the separate form-context candidate. It reads visible form-associated headings, legends and accessible names within 100 elements and 1,000 text characters, with one credential form per container. It shares the existing 30-point brand mismatch and guard policy, so repeated title/heading/logo evidence cannot stack and a heading alone cannot authorize an interruption. Logo text alone is insufficient. The candidate is disabled: it detects extra synthetic phishing cases but also introduces a benign enterprise-login warning. Coverage clarity ships independently; live rules, AI version/payload/trigger and cloud permissions remain unchanged. See [candidate measurements](evaluation/form-branding-report.json); these are synthetic regressions, not independent accuracy evidence.
+Run `npm run evaluate:branding` for the separate form-context candidate. It reads visible form-associated headings, legends and accessible names within 100 elements and 1,000 text characters, with one credential form per container. It shares the existing 30-point brand mismatch and guard policy, so repeated title/heading/logo evidence cannot stack and a heading alone cannot authorize an interruption. Logo text alone is insufficient. The candidate remains disabled: it detects extra synthetic phishing cases but also introduces benign enterprise-login and SSO alerts. Rules version 3 reflects the evidence-policy changes described above; cloud consent and advisory-only AI remain intact. See [candidate measurements](evaluation/form-branding-report.json); these are synthetic regressions, not independent accuracy evidence.
 
 To compare offline AI advice:
 
@@ -97,7 +97,7 @@ Exported semantic cues come only from synthetic held-out fixtures. The exporter 
 - Closed page shadow roots are inaccessible. Newly attached open roots may not be discovered until a mutation or periodic pass. Bounds can leave fields and elements unexamined.
 - Browser-internal/error pages, the Web Store, some viewers, sandboxed opaque frames, and unsupported documents cannot be fully scanned.
 - Page-controlled styling, fullscreen/top-layer elements, or removal of the closed-shadow host can hide in-page warnings. Closed Shadow DOM isolates warning contents but is not a security boundary against the host page. Use the toolbar/popup.
-- Cross-site HTTPS credential forms can be legitimate SSO. The baseline intentionally reports these false warnings; they are not automatically interrupted.
+- Cross-site HTTPS credential forms can be legitimate SSO. They receive passive destination notices, without phishing alerts or automatic interruptions from that evidence alone.
 - Brand references are finite. Same-site phishing without protected-brand impersonation, unmarked OTP flows, compromised legitimate sites, and new attack styles may be missed.
 - Real-world benign/phishing evaluation, minimum-Chrome-version testing, native prerender/tab replacement, and explicit BFCache activation verification remain release-validation work. The browser suite verifies back navigation and pageshow recovery but does not assert that Chrome used BFCache.
 
