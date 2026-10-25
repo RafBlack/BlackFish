@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { digest, DAY, validateThreat } from '../../lib/cloud-contract.js';
+import { digest, DAY, validateThreat, RULES_VERSION } from '../../lib/cloud-contract.js';
 import { CloudClient } from '../../lib/cloud-client.js';
 import { PersistentCache } from '../../lib/persistent-cache.js';
 
@@ -49,7 +49,7 @@ test('a hanging permission check and a stalled body cannot exceed the request de
 
 test('managed AI shares one three-second budget across configuration and inference',async()=>{
   const client=new CloudClient({cache:new PersistentCache(),permission:async()=>true,fetcher:async endpoint=>{
-    if(endpoint.endsWith('/config')){await new Promise(resolve=>setTimeout(resolve,800));return Response.json({schema:1,rulesVersion:'2',model:'fixture',promptVersion:'1',examplesVersion:'1',managedEnabled:true});}
+    if(endpoint.endsWith('/config')){await new Promise(resolve=>setTimeout(resolve,800));return Response.json({schema:1,rulesVersion:RULES_VERSION,model:'fixture',promptVersion:'1',examplesVersion:'1',managedEnabled:true});}
     return new Promise(()=>{});
   }});
   const start=performance.now();assert.equal((await client.triage(context,settings)).status,'timeout');assert.ok(performance.now()-start<3500);
@@ -75,7 +75,7 @@ test('cached managed advice does not extend the capability freshness window',asy
   const cache=new PersistentCache({now:()=>now});
   const client=new CloudClient({cache,now:()=>now,permission:async()=>true,fetcher:async(endpoint,options)=>{
     calls++;
-    return endpoint.endsWith('/config')?Response.json({schema:1,rulesVersion:'2',model:'fixture',promptVersion:'1',examplesVersion:'1',managedEnabled:true}):Response.json({status:'complete',escalate:false,reason:'Bounded advice.',versions:JSON.parse(options.body).versions});
+    return endpoint.endsWith('/config')?Response.json({schema:1,rulesVersion:RULES_VERSION,model:'fixture',promptVersion:'1',examplesVersion:'1',managedEnabled:true}):Response.json({status:'complete',escalate:false,reason:'Bounded advice.',versions:JSON.parse(options.body).versions});
   }});
   const first=await client.triage(context,settings);now+=14*60000;
   const reused=await client.triage(context,settings);assert.equal(reused.cached,true);assert.equal(reused.policyFreshUntil,first.policyFreshUntil);assert.equal(calls,2);

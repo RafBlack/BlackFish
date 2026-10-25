@@ -75,6 +75,6 @@ test('ambiguous enterprise branding fails the benign gate, so runtime defaults a
   assert.equal((await analyze(false)).score,15);
   assert.equal((await analyze(true)).score,45);
   assert.equal(FORM_BRANDING_ENABLED,false);
-  assert.equal(RULES_VERSION,'2');
+  assert.equal(RULES_VERSION,'3');
   assert.equal((await page.evaluate(()=>BrandingTest.analyze())).score,15);
 });

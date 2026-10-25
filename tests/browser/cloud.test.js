@@ -5,7 +5,7 @@ import { mkdtemp, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { DAY, digest } from '../../lib/cloud-contract.js';
+import { DAY, digest, RULES_VERSION } from '../../lib/cloud-contract.js';
 
 process.env.PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS='1';
 const root=fileURLToPath(new URL('../../',import.meta.url)),origin='https://blackfish-api.xelulabs.workers.dev';
@@ -46,7 +46,7 @@ async function launch(){
         managedActive++;managedPeak=Math.max(managedPeak,managedActive);await new Promise(resolve=>setTimeout(resolve,600));managedActive--;
         return route.fulfill({headers,json:{status:'complete',escalate:false,reason:'Credential context: '+body.context.hasCredentials,versions:body.versions}});
       }
-      return route.fulfill({headers,json:{schema:1,rulesVersion:'2',model:'fixture',promptVersion:'1',examplesVersion:'1',managedEnabled:managedGate}});
+      return route.fulfill({headers,json:{schema:1,rulesVersion:RULES_VERSION,model:'fixture',promptVersion:'1',examplesVersion:'1',managedEnabled:managedGate}});
     }
     return route.fulfill({contentType:'text/html',body:pages.get(url)||'<!doctype html><title>Fixture</title><p>Clean fixture</p>'});
   });
@@ -159,6 +159,23 @@ test('personal AI uses a correctly bound browser fetch and never receives page v
   const request=requests.find(request=>request.url==='https://api.x.ai/v1/chat/completions');
   const metadata=JSON.parse(request.body.messages[1].content);
   assert.deepEqual(Object.keys(metadata).sort(),['hasCredentials','hostname','signalIds']);assert.equal(JSON.stringify(metadata).includes('fixture-only'),false);
+  await page.close();
+});
+test('AI uses only top-document evidence and ignores unrelated borderline child frames',async()=>{
+  const child='https://google.child-example.com/context';
+  pages.set(child,'<!doctype html><title>Fixture</title><p>Child without credentials</p>');
+  const personal=()=>requests.filter(request=>request.url==='https://api.x.ai/v1/chat/completions');
+  const before=personal().length;
+  const parent=await open('https://ai-parent.example.com/','<iframe src="'+child+'"></iframe>');
+  await until(async()=>{const s=await status(parent);return s.frameCount===2&&s.state==='complete'&&s.ai.status==='not-needed';});
+  const rescanned=await api.evaluate(tabId=>chrome.runtime.sendMessage({type:'RESCAN_ACTIVE_TAB',tabId}),await idFor(parent));
+  assert.equal(rescanned.ok,true);assert.equal(personal().length,before);
+  await parent.close();
+  const page=await open('https://ai-sso.example.com/',form.replace('<form id="login">','<form id="login" action="https://identity.example.net/">')+'<iframe src="'+child+'"></iframe>');
+  await until(async()=>{const s=await status(page);return s.frameCount===2&&s.ai.status==='complete';});
+  const request=personal().find(request=>JSON.parse(request.body.messages[1].content).hostname==='ai-sso.example.com');
+  const metadata=JSON.parse(request.body.messages[1].content);
+  assert.deepEqual(metadata,{hostname:'ai-sso.example.com',signalIds:['credential-presence','cross-origin-credential-form'],hasCredentials:true});
   await page.close();
 });
 test('cache clearing preserves invitation credentials; opt-out stops subsequent cloud traffic',async()=>{

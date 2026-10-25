@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { AiAssist, parseAiResponse } from '../../lib/ai-assist.js';
+import { RULES_VERSION } from '../../lib/cloud-contract.js';
 const settings={bf_ai_enabled:true,bf_ai_endpoint:'http://localhost:11434/v1/chat/completions',bf_ai_model:'fixture',bf_ai_key:''};
 const response = reason => new Response(JSON.stringify({choices:[{message:{content:JSON.stringify({escalate:true,reason})}}]}));
 const tick=()=>new Promise(r=>setImmediate(r));
@@ -42,6 +43,12 @@ test('request reservations and completed advice survive worker restart',async()=
   await original.consider(args);
   const restored=new AiAssist({permission:async()=>true,onResult:()=>{},documents:snapshot,fetcher:async()=>{calls++;return response('Unwanted duplicate');}});
   await restored.consider(args);assert.equal(calls,1);
-  const interrupted=new AiAssist({permission:async()=>true,onResult:()=>{},documents:{7:{id:'same-document',cache:[['same-evidence',{status:'pending'}]]}},fetcher:async()=>{calls++;return response('Unwanted retry');}});
+  const interrupted=new AiAssist({permission:async()=>true,onResult:()=>{},documents:{7:{id:'same-document',rulesVersion:RULES_VERSION,cache:[['same-evidence',{status:'pending'}]]}},fetcher:async()=>{calls++;return response('Unwanted retry');}});
   await interrupted.consider(args);assert.equal(calls,1);
+});
+test('advice from an older rules version is not restored',async()=>{
+  let calls=0;
+  const ai=new AiAssist({permission:async()=>true,onResult:()=>{},documents:{7:{id:'same-document',rulesVersion:'old',cache:[['same-evidence',{status:'complete',reason:'Obsolete',escalate:true}]]}},fetcher:async()=>{calls++;return response('Current advice');}});
+  await ai.consider({tabId:7,documentId:'same-document',fingerprint:'same-evidence',context,settings});
+  assert.equal(calls,1);assert.equal(ai.serialize()[7].rulesVersion,RULES_VERSION);
 });

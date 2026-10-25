@@ -5,7 +5,7 @@ import { domainInfo, normalizeDomain } from '../lib/heuristics/domain.js';
 import { sanitizeSettings, publicSettings, normalizeOrigin, SerialQueue, endpointInfo, DEFAULTS } from '../lib/settings.js';
 import { PersistentCache } from '../lib/persistent-cache.js';
 import { CloudClient } from '../lib/cloud-client.js';
-import { canonicalUrl, digest, FRESHNESS } from '../lib/cloud-contract.js';
+import { canonicalUrl, digest, FRESHNESS, RULES_VERSION } from '../lib/cloud-contract.js';
 
 const writes = new SerialQueue();
 const stateQueue = new SerialQueue();
@@ -33,7 +33,7 @@ async function initialize() {
       stateQueue.run(async () => {
         const tab = state.tabs.get(tabId);
         const current = state.result(tabId, settings.bf_allowlist);
-        if (!tab || tab.documentId !== docId || current.state === 'trusted' || await digest(evidenceFingerprint(current.scored)) !== fingerprint || !settings.bf_ai_enabled || settings.bf_managed_ai) return;
+        if (!tab || tab.documentId !== docId || current.state !== 'complete' || current.reputation.status === 'confirmed' || await aiFingerprint(current) !== fingerprint || !settings.bf_ai_enabled || settings.bf_managed_ai) return;
         tab.ai = result;
         await publish(tabId);
       }).catch(console.error);
@@ -41,6 +41,7 @@ async function initialize() {
   });
   // Retain only documents still active in this browser session.
   for (const [tabId, tab] of state.tabs) {
+    if (tab.rulesVersion !== RULES_VERSION) { tab.ai = { status: 'off' }; delete tab.aiFingerprint; tab.cloudFingerprints = []; tab.rulesVersion = RULES_VERSION; }
     try { const top = await chrome.webNavigation.getFrame({ tabId, frameId: 0 }); if (top?.documentId !== tab.documentId) state.tabs.delete(tabId); }
     catch { state.tabs.delete(tabId); }
   }
@@ -50,7 +51,9 @@ async function initialize() {
 function configToken() { return JSON.stringify(publicSettings(settings)); }
 function extensionPage(sender) { return sender.id === chrome.runtime.id && sender.url?.startsWith(chrome.runtime.getURL('')); }
 function webPage(url) { try { return ['http:', 'https:'].includes(new URL(url).protocol); } catch { return false; } }
-function features(top, result) { return { hostname: new URL(top.url).hostname, signalIds: result.scored.signals.map(s => s.id).sort(), hasCredentials: result.scored.signals.some(s => s.id === 'credential-presence') }; }
+function topEvidence(result) { return bfAggregateScore([result.scored.signals.filter(s => s.frameId === 0)]); }
+function aiFingerprint(result) { return digest(RULES_VERSION + '|' + evidenceFingerprint(topEvidence(result))); }
+function features(top, result) { const scored = topEvidence(result); return { hostname: new URL(top.url).hostname, signalIds: scored.signals.map(s => s.id).sort(), hasCredentials: scored.signals.some(s => s.id === 'credential-presence') }; }
 async function eligible(tabId, top) {
   if (!canonicalUrl(top.url) || settings.bf_allowlist.includes(new URL(top.url).origin)) return false;
   return !(await chrome.tabs.get(tabId)).incognito;
@@ -109,9 +112,9 @@ function startManaged(tabId, top, result, fingerprint) {
       const currentTop = await chrome.webNavigation.getFrame({ tabId, frameId: 0 });
       const tab = state.tabs.get(tabId), current = state.result(tabId, settings.bf_allowlist);
       if (generation !== cloudGeneration || managed.get(tabId) !== request || !tab || !currentTop || tab.documentId !== currentTop.documentId || current.state !== 'complete' || current.reputation?.status === 'confirmed') return;
-      const latest = await digest(evidenceFingerprint(current.scored));
+      const latest = await aiFingerprint(current);
       if (latest !== fingerprint || currentTop.url !== top.url || currentTop.documentId !== top.documentId) {
-        if (bfIsBorderline(current.scored.score)) startManaged(tabId, currentTop, current, latest);
+        if (bfIsBorderline(topEvidence(current).score)) startManaged(tabId, currentTop, current, latest);
         await publish(tabId); return;
       }
       tab.ai = advice; await publish(tabId);
@@ -184,11 +187,12 @@ async function scanMessage(msg, sender) {
     }
     const result = state.result(tabId, settings.bf_allowlist);
     const tab = state.tabs.get(tabId);
-    const fingerprint = await digest(evidenceFingerprint(result.scored));
+    const fingerprint = await aiFingerprint(result);
+    tab.rulesVersion = RULES_VERSION;
     const aiEnabled = settings.bf_ai_enabled || settings.bf_managed_ai;
     if (tab.aiFingerprint !== fingerprint) { tab.ai = { status: aiEnabled ? 'idle' : 'off' }; tab.aiFingerprint = fingerprint; }
     const browserTab = await chrome.tabs.get(tabId);
-    if (!browserTab.incognito && result.state !== 'trusted' && result.state === 'complete' && result.reputation.status !== 'confirmed' && bfIsBorderline(result.scored.score)) {
+    if (!browserTab.incognito && result.state === 'complete' && result.reputation.status !== 'confirmed' && bfIsBorderline(topEvidence(result).score)) {
       if (settings.bf_managed_ai) startManaged(tabId, top, result, fingerprint);
       else if (endpointInfo(settings.bf_ai_endpoint)?.local || canonicalUrl(top.url)) void ai.consider({ tabId, documentId: top.documentId, fingerprint, settings: { ...settings }, context: features(top, result) });
     } else { ai.cancel(tabId); tab.ai = { status: managed.get(tabId)?.pending ? 'pending' : aiEnabled ? 'not-needed' : 'off' }; }
