@@ -11,7 +11,8 @@
   <a href="#get-started">Get started</a> ·
   <a href="#what-the-warnings-mean">Warnings</a> ·
   <a href="PRIVACY.md">Privacy</a> ·
-  <a href="#development">Development</a>
+  <a href="#development">Development</a> ·
+  <a href="CONTRIBUTING.md">Contributing</a>
 </p>
 
 BlackFish is a Chrome extension from [xelulabs](https://github.com/RafBlack/xelulabs) that looks for signs of login and credential phishing. It checks the address and page locally, explains what it finds, and pauses supported credential submissions when stronger evidence calls for a second look.
@@ -129,6 +130,8 @@ For implementation details, see the [detection reference](docs/DETECTION.md). If
 
 ## Feedback
 
-[Open an issue](https://github.com/RafBlack/blackfish/issues/new) for a reproducible bug or false warning. Include the Chrome version, BlackFish version, scan status, and rule IDs. Use a controlled example when possible; remove credentials, private URLs, query tokens, and account details before sharing. A reported page does not become a confirmed threat automatically.
+[Use the issue chooser](https://github.com/RafBlack/BlackFish/issues/new/choose) for reproducible bugs, detection feedback, and feature requests. Include the Chrome version, BlackFish version, scan status, and rule IDs. Use a controlled example when possible; remove credentials, private URLs, query tokens, and account details before sharing. A reported page does not become a confirmed threat automatically.
+
+The [contribution guide](CONTRIBUTING.md) covers local checks and private reporting for vulnerabilities in BlackFish. Maintainers can find About text, topics, and the social preview in the [repository setup guide](docs/REPOSITORY.md).
 
 Built by **[xelulabs](https://github.com/RafBlack/xelulabs)**. Xelu's original artwork, the mark, and packaged fonts are documented in the [visual system](DESIGN.md) and [asset provenance](assets/SOURCE.md).
