@@ -131,7 +131,7 @@ function observe(root) {
   if (observed.has(root)) return;
   observed.add(root);
   observer.observe(root, { childList: true, subtree: true, characterData: true, attributes: true,
-    attributeFilter: ['action','method','target','enctype','formaction','formmethod','formtarget','formenctype','form','type','autocomplete','disabled','href','src','style','class','hidden','content'] });
+    attributeFilter: ['action','method','target','enctype','formaction','formmethod','formtarget','formenctype','form','type','autocomplete','disabled','href','src','style','class','hidden','content','aria-label','aria-labelledby','id','alt'] });
 }
 observe(document);
 function onMessage(msg, sender, respond) {

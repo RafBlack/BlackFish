@@ -3,11 +3,11 @@ import { bfAnalyzeUrl } from '../lib/heuristics/url-analysis.js';
 import { bfCheckLookalikeDomain } from '../lib/heuristics/lookalike-domain.js';
 import { bfAggregateScore, evidenceFingerprint } from '../lib/heuristics/score.js';
 
-export function submissionRisk(form, submitter, brands, parentIdentity = []) {
+export function submissionRisk(form, submitter, brands, parentIdentity = [], options = {}) {
   const analysis = scanSingleForm(form, submitter, brands);
   const url = bfAnalyzeUrl(form.ownerDocument.location.href);
   const identity = bfCheckLookalikeDomain(url.registrableDomain, url.hostname, brands);
-  const title = scanBrandMismatch(form.ownerDocument, url.hostname, analysis.credential, brands);
+  const title = scanBrandMismatch(form.ownerDocument, url.hostname, analysis.credential, brands, { ...options, form });
   const scored = bfAggregateScore([url.signals, identity, title, parentIdentity, analysis.signals]);
   const strongIdentity = scored.signals.some(s => s.category === 'identity' && s.weight >= 35);
   const insecurePassword = analysis.password && analysis.signals.some(s => s.id === 'insecure-credential-form');

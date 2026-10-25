@@ -2,6 +2,7 @@ import { domainInfo } from '../lib/heuristics/domain.js';
 import { BF_BRANDS, approvedFor, bfSameBrandFamily } from '../lib/heuristics/brand-list.js';
 import { BF_EXECUTABLE_EXT } from '../lib/heuristics/url-analysis.js';
 import { signal } from '../lib/heuristics/score.js';
+import { FORM_BRANDING_ENABLED, formBrandText } from './form-branding.js';
 export const LIMITS = Object.freeze({ nodes: 6000, roots: 40, forms: 100, fields: 100, anchors: 800, iframes: 100 });
 // Walk incrementally, rather than materializing an unbounded querySelectorAll result.
 // Open shadow roots are included; closed page roots are intentionally inaccessible.
@@ -75,19 +76,29 @@ export function scanSingleForm(form, submitter = null, brands = BF_BRANDS) {
 function mentions(text, alias) {
   return text.split(/[^\p{L}\p{N}-]+/u).includes(alias.toLowerCase());
 }
-export function scanBrandMismatch(doc, hostname, hasCredentials, brands = BF_BRANDS) {
+export function scanBrandMismatch(doc, hostname, hasCredentials, brands = BF_BRANDS, options = {}) {
   const meta = doc.querySelector('meta[property="og:site_name"]')?.content || '';
   const text = (doc.title + ' ' + meta).toLowerCase().slice(0, 2000);
+  const contextual = new Set();
+  if (hasCredentials && (options.formContext ?? FORM_BRANDING_ENABLED)) {
+    const forms = options.form ? [options.form] : (options.collected || collectElements(doc)).elements.filter(el => el.localName === 'form').slice(0, LIMITS.forms);
+    const credentialForm = form => formFields(form).some(field => credentialKind(field) && isVisible(field));
+    for (const form of forms) if (credentialForm(form)) {
+      for (const word of formBrandText(form, isVisible, credentialForm).toLowerCase().split(/[^\p{L}\p{N}-]+/u)) contextual.add(word);
+    }
+  }
   const result = [];
   for (const brand of brands) {
     if (approvedFor(brand, hostname)) continue;
-    if (brand.aliases.some(alias => alias.length >= 4 && mentions(text, alias))) {
-      result.push(signal(hasCredentials ? 'brand-name-domain-mismatch' : 'brand-mention', hasCredentials ? 'Login page claims the ' + brand.aliases[0] + ' identity on an unrelated site (' + hostname + ').' : 'Page mentions ' + brand.aliases[0] + ' (context only).', { brand: brand.id }));
+    const titleClaim = brand.aliases.some(alias => alias.length >= 4 && mentions(text, alias));
+    const formClaim = brand.aliases.some(alias => alias.length >= 4 && contextual.has(alias.toLowerCase()));
+    if (titleClaim || formClaim) {
+      result.push(signal(hasCredentials ? 'brand-name-domain-mismatch' : 'brand-mention', hasCredentials ? (titleClaim ? 'Login page claims the ' : 'Credential form context claims the ') + brand.aliases[0] + ' identity on an unrelated site (' + hostname + ').' : 'Page mentions ' + brand.aliases[0] + ' (context only).', { brand: brand.id }));
     }
   }
   return result.slice(0, 10);
 }
-export function scanDom(doc, brands = BF_BRANDS) {
+export function scanDom(doc, brands = BF_BRANDS, options = {}) {
   const collected = collectElements(doc);
   const groups = { forms: [], branding: [], iframes: [] };
   const forms = collected.elements.filter(e => e.localName === 'form');
@@ -98,7 +109,7 @@ export function scanDom(doc, brands = BF_BRANDS) {
     groups.forms.push(...scanSingleForm(f, null, brands).signals);
   }
   if (fields.some(f => credentialKind(f) && isVisible(f))) groups.forms.push(signal('credential-presence', 'Page collects a password or a one-time authentication code.'));
-  groups.branding = scanBrandMismatch(doc, new URL(doc.location.href).hostname, groups.forms.some(s => s.id === 'credential-presence'), brands);
+  groups.branding = scanBrandMismatch(doc, new URL(doc.location.href).hostname, groups.forms.some(s => s.id === 'credential-presence'), brands, { ...options, collected });
   let hidden = 0;
   const iframes = collected.elements.filter(e => e.localName === 'iframe');
   if (iframes.length > LIMITS.iframes) collected.coverage.truncated = true;
