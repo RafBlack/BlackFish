@@ -84,7 +84,7 @@ function renderResult(result) {
   if (!contextActive() || stopped || result.documentId !== ownDocumentId || result.version < lastVersion) return;
   lastVersion = result.version;
   parentIdentity = result.scored.signals.filter(s => s.category === 'identity' && s.frameId === 0);
-  overlay?.render(result.scored, result.state, result.reputation);
+  overlay?.render(result.scored, result.state, result.reputation, result.truncated);
 }
 async function runScan() {
   if (stopped || !contextActive()) return { ok: false, inactive: true };

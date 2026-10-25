@@ -5,6 +5,7 @@ import { mkdtemp, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { COVERAGE_NOTICE } from '../../ui/coverage.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 let context, api, extensionId;
@@ -308,6 +309,84 @@ test('hidden-field stuffing cannot push a credential outside the guard sample',a
   await page.locator('#submit').click();await dialog(page);
   assert.equal(await page.evaluate(()=>window.submissions.length),0);
   await cancel(page);await page.close();
+});
+
+for(const width of [1440,390]) test('coverage stays explicit through clean, partial, paused and unavailable results at '+width+'px',async()=>{
+  const page=await open('https://coverage.example.org/'+width,'<h1>Google integration guide</h1>','Google integration');
+  await page.setViewportSize({width,height:844});
+  const tabId=await idFor(page), popup=await context.newPage();
+  popup.on('pageerror',e=>errors.push(e.message));
+  popup.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
+  await popup.addInitScript(({tabId})=>{
+    const original=chrome.tabs.query;
+    chrome.tabs.query=(q,...args)=>q.active && q.currentWindow ? Promise.resolve([{id:tabId}]) : original(q,...args);
+  },{tabId});
+  await popup.setViewportSize({width:400,height:600});
+  await popup.goto('chrome-extension://'+extensionId+'/popup/popup.html');
+  await popup.getByText('Credential-phishing scan complete',{exact:true}).waitFor();
+  assert.equal(await popup.locator('#coverageNotice').innerText(),COVERAGE_NOTICE);
+  await page.evaluate(()=>{const fragment=document.createDocumentFragment();for(let i=0;i<6500;i++)fragment.append(document.createElement('div'));document.body.append(fragment);});
+  await complete(page,s=>s.truncated);
+  await popup.getByText('Partial credential-phishing scan',{exact:true}).waitFor();
+  assert.equal(await popup.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  await popup.screenshot({path:path.join(root,'test-results/coverage-popup-'+width+'.png'),fullPage:true});
+  const trusted=await api.evaluate(tabId=>chrome.runtime.sendMessage({type:'TRUST_SITE',tabId}),tabId);
+  assert.equal(trusted.ok,true);
+  await popup.getByText('Credential-phishing protection paused',{exact:true}).waitFor();
+  assert.equal(await popup.locator('#scoreNum').innerText(),'-');
+  await settings({bf_allowlist:[]});await complete(page,s=>s.state==='complete');
+  await page.goto('chrome://version/');
+  await popup.close();
+  const unsupported=await context.newPage();
+  await unsupported.addInitScript(({tabId})=>{
+    const original=chrome.tabs.query;
+    chrome.tabs.query=(q,...args)=>q.active && q.currentWindow ? Promise.resolve([{id:tabId}]) : original(q,...args);
+  },{tabId});
+  await unsupported.goto('chrome-extension://'+extensionId+'/popup/popup.html');
+  await unsupported.getByText('Credential-phishing scan unavailable',{exact:true}).waitFor();
+  assert.equal(await unsupported.locator('#scoreNum').innerText(),'-');
+  assert.equal(await unsupported.locator('#coverageNotice').innerText(),COVERAGE_NOTICE);
+  await unsupported.close();await page.close();
+});
+
+test('browser-blocked navigation from a clean page never reuses its completed clean verdict',async()=>{
+  const page=await open('https://clean-before-block.example.org/','<p>Clean local fixture</p>');
+  const first=await complete(page);assert.equal(first.scored.score,0);
+  const tabId=await idFor(page);
+  await page.route('https://browser-blocked.example.org/',route=>route.abort('blockedbyclient'));
+  await page.goto('https://browser-blocked.example.org/').catch(()=>{});
+  const result=await waitFor(()=>api.evaluate(async tabId=>{
+    const result=await chrome.runtime.sendMessage({type:'GET_TAB_STATUS',tabId});
+    return ['unsupported','failed'].includes(result.state) ? result : null;
+  },tabId),'unavailable browser-blocked document');
+  assert.notEqual(result.state,'complete');
+  await page.close();
+});
+
+test('failed status and rescan requests never leave a completed clean verdict',async()=>{
+  const popup=await context.newPage();
+  await popup.addInitScript(()=>{
+    const original=chrome.runtime.sendMessage;
+    let calls=0;
+    chrome.runtime.sendMessage=(message,...args)=>{
+      if(message.type==='GET_TAB_STATUS') {
+        if(calls++===0)return Promise.reject(new Error('Fixture status unavailable'));
+        return Promise.resolve({state:'complete',documentId:'fixture',version:1,scored:{score:0,level:'LOW',signals:[]}});
+      }
+      if(message.type==='RESCAN_ACTIVE_TAB')return Promise.resolve({ok:false,error:'Fixture rescan incomplete',result:{state:'complete',documentId:'fixture',version:2,scored:{score:0,level:'LOW',signals:[]}}});
+      return original(message,...args);
+    };
+  });
+  await popup.goto('chrome-extension://'+extensionId+'/popup/popup.html');
+  await popup.getByText('Credential-phishing scan failed',{exact:true}).waitFor();
+  assert.equal(await popup.locator('#scoreNum').innerText(),'-');
+  assert.equal(await popup.locator('#coverageNotice').innerText(),COVERAGE_NOTICE);
+  await popup.locator('#rescanBtn').click();
+  await popup.getByText('Fixture rescan incomplete',{exact:true}).waitFor();
+  assert.equal(await popup.locator('#coverageStatus').innerText(),'Credential-phishing scan failed');
+  assert.equal(await popup.locator('#scoreNum').innerText(),'-');
+  assert.equal(await popup.locator('#trustBtn').isDisabled(),true);
+  await popup.close();
 });
 
 test('concurrent protected-domain edits preserve every addition and removal',async()=>{

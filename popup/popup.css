@@ -28,6 +28,8 @@ body{max-height:600px;overflow-x:hidden;overflow-y:auto;background:var(--bg)}
 .reason-points{height:fit-content;min-width:32px;padding:1px 5px;border:1px solid #33333b;color:var(--cyan);font-size:9px;text-align:center;white-space:nowrap}
 .reason-meta{display:block;color:var(--dim);font-size:9px;margin-top:4px}
 .empty{margin:12px 0 0;color:var(--muted);font-size:10px;line-height:1.7}
+.coverage strong{display:block;font-weight:400;color:var(--ink)}
+.coverage span{display:block;margin-top:3px}
 .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
 .actions button{font-size:10px;min-height:39px;padding:9px}
 .popup-footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:5px 10px;padding:10px 20px;border-top:1px solid var(--line);color:var(--dim);font-size:9px}

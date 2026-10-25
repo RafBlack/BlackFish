@@ -1,6 +1,7 @@
 import { evidenceFingerprint } from '../lib/heuristics/score.js';
 import { createXelu, createMark, xeluMessage } from '../ui/brand.js';
 import { OVERLAY_CSS } from '../ui/overlay-style.js';
+import { COVERAGE_NOTICE, coverageLabel } from '../ui/coverage.js';
 
 export function createOverlay(doc, onTrust) {
   let host, root, banner, dialog, pendingResolve, previousFocus;
@@ -41,13 +42,14 @@ export function createOverlay(doc, onTrust) {
     if (previousFocus?.isConnected) previousFocus.focus();
     resolve?.(approved);
   }
-  function render(scored, state = 'complete', reputation = { status: 'off' }) {
+  function render(scored, state = 'complete', reputation = { status: 'off' }, truncated = false) {
     const confirmed = reputation.status === 'confirmed' && reputation.expiresAt > Date.now() && reputation.freshUntil > Date.now();
     const key = evidenceFingerprint(scored) + (confirmed ? ':threat:' + reputation.id + ':' + reputation.revision : '');
     if (state === 'trusted' || scored.level === 'LOW' && !confirmed) { clearBanner(); return; }
     if (key === dismissed) return;
-    if (!ensure() || key === lastBanner && banner?.isConnected) return;
-    clearBanner(); lastBanner = key;
+    const renderKey = key + ':' + state + ':' + truncated;
+    if (!ensure() || renderKey === lastBanner && banner?.isConnected) return;
+    clearBanner(); lastBanner = renderKey;
     banner = node('aside', undefined, 'banner');
     banner.dataset.level = confirmed ? 'HIGH' : scored.level;
     banner.setAttribute('role', 'status'); banner.setAttribute('aria-label', 'BlackFish: Xelu phishing warning');
@@ -65,7 +67,8 @@ export function createOverlay(doc, onTrust) {
     trust.addEventListener('click', async e => { if (e.isTrusted) { trust.disabled = true; try { await onTrust(); clear(); } catch { trust.disabled = false; } } });
     const dismiss = node('button', 'Dismiss', 'dismiss');
     dismiss.addEventListener('click', () => { dismissed = key; clearBanner(); });
-    actions.append(trust, dismiss); banner.append(header, stage, reasons, actions); root.append(banner);
+    const coverage = node('p', coverageLabel({ state, truncated }) + '. ' + COVERAGE_NOTICE, 'coverage banner-coverage');
+    actions.append(trust, dismiss); banner.append(header, stage, reasons, coverage, actions); root.append(banner);
   }
   function prompt({ key, scored, reason, frameHost }) {
     if (activeKey === key && pendingResolve) return Promise.resolve(false);
@@ -105,7 +108,7 @@ export function createOverlay(doc, onTrust) {
     });
     actions.append(cancel, proceed); body.append(actions); content.append(scene, body);
     const footer = node('div', undefined, 'card-footer');
-    footer.append(node('span', 'Local protection. Your decision.'), node('span', 'RISK INDICATOR ' + scored.score + ' / 100'));
+    footer.append(node('span', 'Local protection. Your decision.'), node('span', 'RISK INDICATOR ' + scored.score + ' / 100'), node('p', COVERAGE_NOTICE, 'coverage'));
     card.append(header, content, footer); dialog.append(card); root.append(dialog); cancel.focus();
     return new Promise(resolve => { pendingResolve = resolve; });
   }

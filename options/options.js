@@ -1,7 +1,9 @@
 import { normalizeDomain } from '../lib/heuristics/domain.js';
 import { endpointInfo, cloudOrigin } from '../lib/settings.js';
 import { mountBrand } from '../ui/brand.js';
+import { COVERAGE_NOTICE } from '../ui/coverage.js';
 mountBrand(document);
+document.getElementById('coverageNotice').textContent = COVERAGE_NOTICE;
 let settings;
 const el = id => document.getElementById(id);
 const send = async msg => {

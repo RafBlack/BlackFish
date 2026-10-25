@@ -15,6 +15,7 @@ function render(result) {
   documentId = result.documentId; version = result.version ?? 0;
   const state = result.state;
   const scored = result.scored;
+  document.getElementById('coverageStatus').textContent = coverageLabel(result);
   document.getElementById('xeluLine').textContent = xeluMessage(state, scored?.level);
   verdictEl.className = 'verdict ' + (scored?.level.toLowerCase() || 'low');
   score.textContent = ['unsupported','failed','trusted'].includes(state) ? '-' : String(scored?.score ?? '-');
@@ -61,6 +62,12 @@ function render(result) {
   document.getElementById('reportBtn').disabled = ['unsupported','trusted','failed'].includes(state);
 }
 async function request(type) { return chrome.runtime.sendMessage({ type, tabId }); }
+function showFailure(message) {
+  level.textContent = 'Scan failed'; score.textContent = '-';
+  document.getElementById('coverageStatus').textContent = coverageLabel({ state: 'failed' });
+  trust.disabled = true; document.getElementById('reportBtn').disabled = true;
+  note.hidden = false; note.textContent = message;
+}
 chrome.runtime.onMessage.addListener(msg => {
   if (msg.type === 'TAB_STATUS_UPDATED' && msg.tabId === tabId && !disposed) render(msg.result);
 });
@@ -69,8 +76,8 @@ rescan.addEventListener('click', async () => {
   try {
     const reply = await request('RESCAN_ACTIVE_TAB');
     if (reply.result) render(reply.result);
-    if (!reply.ok) { note.hidden = false; note.textContent = reply.error || 'Rescan did not complete. Reload this page.'; }
-  } catch (error) { note.hidden = false; note.textContent = error.message; }
+    if (!reply.ok) showFailure(reply.error || 'Rescan did not complete. Reload this page.');
+  } catch (error) { showFailure(error.message); }
   finally { rescan.disabled = false; }
 });
 trust.addEventListener('click', async () => {
@@ -107,6 +114,8 @@ window.addEventListener('pagehide', () => { disposed = true; });
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   tabId = tab?.id;
   if (tabId != null) render(await request('GET_TAB_STATUS'));
-})().catch(error => { level.textContent = 'Status unavailable'; note.hidden = false; note.textContent = error.message; });
+})().catch(error => { showFailure(error.message); });
 import { mountBrand, xeluMessage } from '../ui/brand.js';
+import { COVERAGE_NOTICE, coverageLabel } from '../ui/coverage.js';
 mountBrand(document);
+document.getElementById('coverageNotice').textContent = COVERAGE_NOTICE;
