@@ -8,6 +8,7 @@
     "test": "node --test tests/unit/*.test.js",
     "test:browser": "npm run build && node --test --test-concurrency=1 tests/browser/*.test.js",
     "evaluate": "node scripts/evaluate.mjs",
+    "evaluate:branding": "node scripts/evaluate-form-branding.mjs",
     "check": "npm test && npm run test:browser && npm run evaluate",
     "evaluate:ai:export": "node scripts/export-ai-evaluation.mjs"
   },
