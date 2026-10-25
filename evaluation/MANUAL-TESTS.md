@@ -12,7 +12,7 @@ Build with `npm run build`, reload the unpacked extension, and refresh existing 
 | [BadSSL mixed-form](https://mixed-form.badssl.com/) | No credential interruption for its ordinary text field | A text form posting to HTTP is not a password/OTP form. |
 | HTTP password page, or HTTPS password form posting to HTTP | Transport warning and supported submission interruption | Test locally with `npm run test:browser`; it captures the submission without sending credentials. |
 | Strong lookalike domain collecting same-site credentials | Warning and deliberate one-time submission approval | Local impersonation evidence and credential collection agree. Cancel never approves a later attempt. |
-| Legitimate cross-site HTTPS SSO | May retain the documented baseline warning; no automatic interruption from the cross-site form alone | A cross-site destination is not proof of phishing. |
+| Legitimate cross-site HTTPS SSO | Passive popup destination notice; no alarming badge, page warning, or interruption from the cross-site form alone | A cross-site destination is not proof of phishing. |
 | Generic-title login claiming a protected brand in a heading/legend/accessibility label | Offline candidate evaluation only | The candidate adds detections but also warns on a legitimate custom-domain enterprise example, so it is disabled. |
 | Article mentioning brands, logo alone, hidden or oversized context, approved brand family/payment embed | No new branding weight | Context is bounded and tied to a credential form. Logos alone cannot establish an identity claim. |
 | Large page | Explicit partial scan status | Limits are disclosed; remaining content is not assumed safe. |

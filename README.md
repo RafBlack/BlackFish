@@ -1,104 +1,134 @@
-# BlackFish personal beta (0.2.0)
+# BlackFish
 
-BlackFish detects signs of login and credential phishing using local, explainable URL and DOM analysis. AI is disabled by default and provides optional advice only. Findings describe observed evidence and an action; the experimental numeric index is available in technical details, not a probability, CVSS rating, or calibrated risk assessment.
+![BlackFish by xelulabs. Xelu says: check that address first.](docs/images/blackfish-banner.svg)
 
-The interface follows xelulabs' original visual identity: Xelu's pixel-art mascot, the Xelu mark, dark dot-grid surfaces, terminal typography, and square speech bubbles. Xelu appears in the popup, page banners, full submission warnings, and settings. All art and fonts are packaged locally. See DESIGN.md and assets/SOURCE.md for the reference and attribution. To regenerate the toolbar PNG icons from the original SVG mark, run node scripts/brand-icons.mjs.
+<p align="center">
+  <strong>Credential-phishing checks. Local first. Xelu on watch.</strong><br>
+  <sub>v0.2.0 personal beta · Chrome Manifest V3 · Optional AI</sub>
+</p>
 
-## Build and load
+<p align="center">
+  <a href="#get-started">Get started</a> ·
+  <a href="#what-the-warnings-mean">Warnings</a> ·
+  <a href="PRIVACY.md">Privacy</a> ·
+  <a href="#development">Development</a>
+</p>
 
-Use Node.js 20 or newer:
+BlackFish is a Chrome extension from [xelulabs](https://github.com/RafBlack/xelulabs) that looks for signs of login and credential phishing. It checks the address and page locally, explains what it finds, and pauses supported credential submissions when stronger evidence calls for a second look.
 
-    npm ci
-    npm run build
+Local protection works offline, without an account or AI provider. This is a personal beta installed from source; Web Store distribution is not configured in this repository. Shared threat memory requires a separately deployed service and an invitation. Managed AI remains behind its evaluation gate.
 
-In Chrome, open chrome://extensions, enable Developer mode, choose **Load unpacked**, and select **blackfish**. Its manifest and UI load the generated JavaScript from dist, so Chrome never attempts to resolve npm imports from the source files. After editing, build again, reload the extension, and reload existing web tabs. Existing injected scripts from an earlier extension version cannot be upgraded in place.
+## What BlackFish does
 
-The generated **blackfish/dist** folder is also independently loadable and is the self-contained package to copy or distribute. Its generated manifest and HTML reference bundles within that folder. No remote JavaScript or build-time network requests are required after npm ci. Unicode data is vendored and pinned.
+- **Checks the address early.** Detects protected-brand lookalikes, confusable domains, and misleading brand subdomains using explicit domain boundaries and approved brand identities.
+- **Checks credential collection.** Inspects visible password and explicit sign-in-code fields, form destinations, page branding, and displayed link destinations, including discovered open shadow roots and embedded frames.
+- **Explains before you decide.** Xelu gives concrete findings and recommended actions in the popup, page warnings, and submission dialog. Canceling never authorizes a later submission; overrides apply once to the inspected form and destination.
+- **Keeps evidence stable.** Repeated scans do not stack points. Removing evidence updates the assessment, and unrelated frames cannot combine into a stronger finding.
+- **Leaves optional services optional.** Personal AI, shared reputation, reporting, and managed AI start disabled. Local detection keeps running when those services are unavailable.
 
-If Chrome reports "Failed to resolve module specifier tldts" or service-worker registration status 15, it is loading an old manifest or unbundled source. Run npm run build, click Reload on the BlackFish card in chrome://extensions, and refresh your web tabs. You can keep the existing blackfish folder installation; removing the extension is unnecessary.
+<p align="center">
+  <img src="docs/images/popup.png" width="340" alt="BlackFish popup showing Xelu, impersonation indicators on a controlled paypa1.com fixture, and the evidence behind the warning.">
+  <br><sub>Actual extension interface, captured on a controlled test fixture.</sub>
+</p>
 
-## Detection and scoring
+## Get started
 
-URL checks run as soon as the worker returns the exact-origin trust configuration. DOM scans cover visible password fields and explicit autocomplete="one-time-code" fields, form destinations, declared branding, displayed link destinations, and contextual iframe/download information. Open shadow roots and externally associated form controls are included within scan limits.
+You need **desktop Chrome 116 or newer** and **Node.js 20 or newer** to build the extension. Backend development has separate requirements in its [setup guide](backend/README.md).
 
-Each source replaces its previous snapshot. Within a document, rule IDs contribute once across elements. Related impersonation rules contribute only their strongest weight; weak support totals at most 20. Frames are assessed separately: identity in one cannot corroborate credentials in another, and their indices are never added together. The page index is the highest individual frame index. Removing evidence lowers it. Internationalized domains, hidden fields, hidden iframes, and executable links do not independently imply phishing. See the [evidence policy, full weight table and primary sources](evaluation/SCORING.md) for the rationale and limits.
+```sh
+git clone https://github.com/RafBlack/blackfish.git
+cd blackfish
+npm ci
+npm run build
+```
 
-Domain boundaries use bundled tldts with private suffixes enabled, so separate github.io tenants are separate sites. IDNs are decoded with Punycode.js and compared using pinned Unicode 17 confusable skeleton data. Approved brand families are explicit identity references, not unconditional exemptions from other checks.
+Already have a checkout? Run the install and build commands from the folder containing `package.json` and `manifest.json`.
 
-The guard pauses supported submit events for insecure password or explicit sign-in-code transport, or strong domain impersonation with credential collection in that same document. These are explicit evidence policies, independent of numeric cutoffs. A title/metadata claim alone does not authorize interruption. A cross-site HTTPS destination alone produces a passive popup notice, without an alarming badge, page banner or interruption. Approval is scoped to one form, submitter, inspected destination, and evidence fingerprint. Cancel grants no approval. Resumption uses requestSubmit to preserve validation, submitter data, and site handlers.
+1. Open `chrome://extensions` in Chrome.
+2. Enable **Developer mode**, then choose **Load unpacked**.
+3. Select the generated **`blackfish/dist`** folder.
+4. Pin BlackFish to the toolbar and refresh any tabs already open.
 
-## Document state and scanning
+Local checks are on by default. Open the popup for the current page's findings, use **Rescan page** after a change, or open **Settings** to configure protected domains and optional services.
 
-The worker derives tab/frame/document identity from Chrome, verifies active documents, and rejects stale revisions and obsolete configuration tokens. Frames retain separate snapshots; a clean iframe cannot overwrite a dangerous parent. Top-level pages render aggregate warnings and submission dialogs. The popup and toolbar are authoritative extension UI.
+After updating the source, run `npm run build`, reload BlackFish in `chrome://extensions`, and refresh existing web tabs. The repository root is also loadable after building; `dist/` is the self-contained extension package. Executable code, dependencies, fonts, and artwork are bundled locally.
 
-Minimal verdict snapshots, navigation context, AI request reservations, and AI budgets persist in storage.session across worker restarts. They clear on browser restart or extension reload. Full navigation URLs, titles, HTML, and field values are not persisted in verdict storage. No complete HTTP redirect-chain claim is made: webNavigation provides limited committed-navigation context.
+## What the warnings mean
 
-Scans observe document and discovered open-root child, attribute, and text changes. Debouncing is 250 ms with a 1,000 ms maximum wait. A 15-second visible-page discovery pass covers roots attached to existing hosts without a DOM mutation. Navigation, BFCache restoration, visibility changes, and user rescans refresh snapshots. Rescan acknowledges completion rather than polling for an arbitrary delay.
+| Finding | What BlackFish does |
+| --- | --- |
+| Impersonation indicators with credential collection in the same document | Warns and pauses supported credential submissions for a deliberate one-time decision. |
+| Insecure password or explicit sign-in-code collection | Warns and pauses supported submissions on HTTP pages, HTTP destinations, or unsupported destination schemes. This is a transport finding, not proof of phishing. |
+| Domain or branding mismatch | Asks you to verify the address. A title or branding claim alone cannot authorize a submission interruption. |
+| Cross-site HTTPS credential destination | Shows a passive popup notice. Legitimate SSO can do this; the destination alone triggers no page warning or interruption. |
+| Fresh, reviewer-confirmed threat match | Prioritizes a confirmed-phishing warning, independently of the local index. Reputation alone does not interrupt submission or block page loading. |
+| No strong indicators, or a partial/failed/unavailable scan | Reports the observed state and coverage. None of these establishes that the page is safe. |
 
-Limits: 6,000 elements, 40 DOM roots, 100 forms, 100 retained fields per form (credential fields prioritized while inspecting up to 6,000 controls), 800 anchors, 100 iframes, and at most 64 retained frame snapshots. Anchor work yields in 6 ms chunks. Reaching a limit displays partial coverage.
+The experimental numeric index is collapsed under **Technical evidence**. Its weights are hand-set: it is not a phishing probability, CVSS rating, or calibrated risk score. Warnings and submission decisions follow explicit evidence policies. See the [full policy, weights, and primary sources](evaluation/SCORING.md).
 
-## Trust and settings
+## Privacy and controls
 
-Trust is exact-origin, including scheme and port. Trusting a top-level origin pauses its scans and guard, including embedded frames. Trusting a child origin pauses only that origin when embedded elsewhere. Removing trust updates existing pages. User settings writes are serialized.
+Local analysis needs no network service. Optional features share data only after configuration and consent:
 
-Legacy allowlists and protected domains are validated and normalized; rejected entries appear in migration notices. Legacy AI enablement is reset once during migration so users can review the advisory-only behavior. Local storage is restricted to trusted extension contexts. Content scripts request only public trust and protected-domain configuration; they cannot read the API key.
+| Feature | Default | Data shared when enabled |
+| --- | --- | --- |
+| Personal or local AI | Off | Top-document hostname, matched rule IDs, and credential-field presence, sent to your configured provider. |
+| Shared threat memory | Off | Hostname and a hash of the exact address, preserving its query and excluding its fragment. Hashing is not anonymity. |
+| Page reports | Off | The exact address and detection metadata, only after a separate preview and confirmation. Reports enter human review. |
+| XeluLabs-managed AI | Off; evaluation-gated | Hostname, rule IDs, and credential presence; curated, reviewed examples may be included. |
 
-Required permissions are storage, webNavigation, and alarms. Alarms expire shared-threat warnings even when the worker sleeps. Static content scripts still run on http(s) pages for automatic protection. Optional host declarations cover api.x.ai, HTTP localhost/127.0.0.1 model endpoints, and Workers.dev beta services. Cloud access is requested only for the exact configured HTTPS Workers origin; none is granted by default. There is no background all-sites fetch permission.
+AI receives no raw URLs, page text, titles, screenshots, field values, or credentials. It provides advice only and cannot change scores, interrupt submissions, or grant approval. Personal AI supports xAI HTTPS or HTTP localhost/127.0.0.1 OpenAI-compatible endpoints; arbitrary remote endpoints are not supported.
 
-## Shared threat memory beta
+**Trust this site** pauses protection for that exact origin, including its embedded frames. Removing trust in Settings resumes checks on open pages. Adding a **protected domain** helps detect impersonation; it does not grant trust. You can clear local threat and AI caches without deleting settings or credentials.
 
-The extension now includes optional shared reputation, explicit reports, and managed-AI controls, all disabled by default. Deployment files are prepared in `backend/`; no hosted service or invitation is preconfigured. Local heuristics and submission decisions remain independent of reputation and AI. See `backend/README.md` for Cloudflare Free deployment, administration and local test commands; see `PRIVACY.md` or the bundled privacy page for consent and retention details.
+Shared-service requests exclude trusted origins, incognito pages, private IP literals, localhost, and intranet names. Required permissions are `storage`, `webNavigation`, and `alarms`; HTTP(S) content scripts provide automatic page analysis. Optional network access is requested for the configured supported endpoint or exact Workers service origin. No provider key or installation token is bundled.
 
-Lookups use the hostname and SHA-256 hash of the exact browser-normalized address, preserving its query and excluding its fragment. Only an explicitly confirmed report sends the raw displayed address for human review. Reviewed threats can match an exact link or an explicitly approved exact hostname; they do not expand to parent domains, other paths, subdomains, or hosted tenants. A hostname record intentionally covers that reviewed hostname's paths. Confirmed records expire within 24 hours and clients require refresh within 15 minutes. Unknown or unavailable records are never safe verdicts.
+Read the [privacy policy](PRIVACY.md) for storage, retention, provider visibility, and consent details. The [backend guide](backend/README.md) covers the separately operated invited service; the extension build never deploys it.
 
-A fresh confirmed match takes priority in the main popup assessment and produces a badge/page warning as navigation opens, even with a zero local index; page loading is not blocked. It adds no heuristic points and cannot trigger or authorize the submission guard. Only the top document is checked by shared reputation in this beta; local analysis still covers embedded frames. Automatic cloud traffic excludes trusted origins, incognito, local/private addresses and intranet names. Public hostnames that point to private services require the user's trust setting; the client does not resolve them.
+## Scope and current limits
 
-Threat, advice and capability caches share a persistent 3 MiB/5,000-entry limit, with expiry and least-recently-used eviction. Clear them in Settings without removing preferences or credentials. AI advice keys include normalized evidence, provider/model, rules, prompt and reviewed-example versions; in-flight and old-document results cannot update a newer page. Personal/local AI configuration is retained, and providers are enabled explicitly rather than falling back automatically.
+BlackFish focuses on **credential theft**. It does not assess TLS certificates, non-credential mixed content, malware, wallet draining, or every link on a page. AMTSO's agreed phishing-test URL is unsupported; BadSSL's connection tests do not measure this detector's phishing coverage. Use the [manual test matrix](evaluation/MANUAL-TESTS.md) to choose relevant checks.
 
-The invited service uses Workers, D1 and Workers AI, with individual revocable installation tokens. SQL limits each installation to 1,000 lookups, five reports and ten new inferences per UTC day, with 100 inferences globally and 25 active invitations. Duplicate inference reservations are atomic. The client waits at most one second for reputation and three seconds for AI. Exhaustion and outages leave local protection running.
+Direct native `form.submit()`, JavaScript credential exfiltration, earlier page handlers, and closed shadow roots can bypass supported scanning or interception. Large pages have explicit scan bounds, and browser-internal pages and some viewers cannot be scanned. Same-site phishing without a recognized identity claim and new attack styles may be missed.
 
-Reports start pending. The administrator CLI requires independent review, scope and evidence to confirm a threat; report counts, model guesses, trust, dismissals and submission overrides never provide ground truth. Raw reports expire after 30 days. Approved minimized examples are versioned and manually curated; changing them invalidates AI approval. No automatic model training occurs.
+A hostile page can hide or remove in-page warnings. Use the extension popup and toolbar as the authoritative interface. Independent real-world accuracy, AI benefit, and some minimum-version/navigation lifecycle scenarios still need validation; public distribution also needs a working public privacy contact and matching store disclosures.
 
-Managed AI remains behind a closed evaluation gate. `backend/evaluation/reviewed-corpus.json` is deliberately empty: the existing 300 synthetic examples cannot establish independent real-world quality. Intake, collection and comparison tooling is included; at least 200 benign/100 phishing reviewed cases and separate domains/templates are required before approval. AI must add held-out phishing detection without benign concern flags and fit the three-second deadline. It remains advisory even after approval.
+## Development
 
-## Experimental AI
+The extension uses JavaScript ES modules, Chrome APIs, HTML/CSS, esbuild, `tldts`, and Punycode.js. No framework or development server is required. Build, load unpacked, and reload to iterate; no dev-server or lint command is configured.
 
-AI advice appears only in the popup. It adds no score and cannot block, approve, or suppress a submission. Live metadata and the 20–54 eligibility index use only the top document's hostname, rule IDs, and credential presence; unrelated child evidence is excluded. Raw titles, full URLs, page text, HTML, field values, and credentials are excluded. Hostnames can still reveal browsing interests. Keys remain in this browser profile and are not encrypted in a secrets vault.
+| Command | Purpose |
+| --- | --- |
+| `npm run build` | Bundle the extension into `dist/`. |
+| `npm test` | Run the Node unit regressions. |
+| `npx playwright install chromium` | Install the browser used by the integration suite. |
+| `npm run test:browser` | Build and run controlled Chromium extension tests. |
+| `npm run evaluate` | Measure the 300 synthetic regression fixtures. |
+| `npm run evaluate:branding` | Compare the disabled form-branding candidate against the current policy. |
+| `npm run check` | Run unit tests, browser tests, and the synthetic evaluation. |
 
-Only configured xAI HTTPS or HTTP localhost/127.0.0.1 OpenAI-compatible endpoints are supported. A model name is required; local models may omit a key. Permission is requested when saving enabled AI. Responses require a real boolean and a reason of at most 300 characters. The three-second deadline covers reading and parsing at most 16 KiB. Redirected API requests fail.
+Browser tests fulfill page requests from local fixtures and never submit real credentials to live phishing sites. Screenshots and local logs are written to ignored `test-results/` files.
 
-One request per document/evidence fingerprint, one in-flight request per tab, at most eight fingerprints per document, and thirty requests per browser-session hour. Request reservations and outcomes survive worker restarts. Interrupted reservations are not automatically retried. Turning AI off or changing settings cancels current requests. No claim of additional detection value is made.
+The [current synthetic report](evaluation/latest-report.json) records alerts on 100 phishing fixtures, no alerts or interruptions on 200 benign fixtures, and 20 passive SSO destination notices. These correlated scenarios verify regressions; they do **not** establish production accuracy. The [form-branding candidate](evaluation/form-branding-report.json) remains disabled because it also adds benign alerts. See the [evaluation guide](evaluation/README.md) for methodology and offline AI comparison.
 
-## Validation
+### Project map
 
-The popup, settings and warnings distinguish credential-phishing coverage from general web security. TLS certificates, non-credential mixed content and malware are not assessed. AMTSO's agreed phishing-test URL is unsupported; no test-domain exception is used to simulate detection. See the [manual test matrix](evaluation/MANUAL-TESTS.md) for AMTSO, BadSSL and supported credential cases.
+```text
+background/   Document state, badges, settings, and optional service coordination
+content/      Page scanning, credential guard, and Xelu warnings
+lib/          Evidence policy, domain heuristics, storage, and AI contracts
+popup/        Toolbar interface
+options/      Settings and consent controls
+ui/           Shared theme and branding
+backend/      Optional Workers + D1 + Workers AI service
+tests/        Unit and browser regressions
+evaluation/   Synthetic fixtures, measurements, and detection policy
+```
 
-    npm test
-    npx playwright install chromium
-    npm run test:browser
-    npm run evaluate
+For implementation details, see the [detection reference](docs/DETECTION.md). If Chrome reports **service-worker status 15** or **Failed to resolve module specifier `tldts`**, rebuild and reload the generated package; Chrome must load bundled code, not raw npm imports.
 
-Browser tests use Playwright's bundled Chromium in a fresh headless profile. All HTTP(S) page resources are fulfilled from controlled fixtures. They do not contact live phishing sites or submit real credentials. Screenshots are written to test-results/.
+## Feedback
 
-The corpus has 200 benign and 100 phishing synthetic scenarios. Tuning/evaluation domains and template families are disjoint, but parameter variants within a family are correlated. See evaluation/latest-report.json and evaluation/README.md. These tests do not establish real-world accuracy.
+[Open an issue](https://github.com/RafBlack/blackfish/issues/new) for a reproducible bug or false warning. Include the Chrome version, BlackFish version, scan status, and rule IDs. Use a controlled example when possible; remove credentials, private URLs, query tokens, and account details before sharing. A reported page does not become a confirmed threat automatically.
 
-Run `npm run evaluate:branding` for the separate form-context candidate. It reads visible form-associated headings, legends and accessible names within 100 elements and 1,000 text characters, with one credential form per container. It shares the existing 30-point brand mismatch and guard policy, so repeated title/heading/logo evidence cannot stack and a heading alone cannot authorize an interruption. Logo text alone is insufficient. The candidate remains disabled: it detects extra synthetic phishing cases but also introduces benign enterprise-login and SSO alerts. Rules version 3 reflects the evidence-policy changes described above; cloud consent and advisory-only AI remain intact. See [candidate measurements](evaluation/form-branding-report.json); these are synthetic regressions, not independent accuracy evidence.
-
-To compare offline AI advice:
-
-    node scripts/export-ai-evaluation.mjs
-    npm run evaluate -- --ai-results PATH_TO_RESPONSES.json
-
-Exported semantic cues come only from synthetic held-out fixtures. The exporter makes no network calls. Responses map fixture IDs to {"escalate": boolean, "reason": "bounded explanation"}. AI is not promoted automatically.
-
-## Coverage limitations
-
-- Direct native form.submit(), fetch/XHR/WebSocket credential exfiltration, and earlier window/page handlers can bypass event interception. Page handlers may change destinations after the guard runs. This is not a network firewall.
-- Closed page shadow roots are inaccessible. Newly attached open roots may not be discovered until a mutation or periodic pass. Bounds can leave fields and elements unexamined.
-- Browser-internal/error pages, the Web Store, some viewers, sandboxed opaque frames, and unsupported documents cannot be fully scanned.
-- Page-controlled styling, fullscreen/top-layer elements, or removal of the closed-shadow host can hide in-page warnings. Closed Shadow DOM isolates warning contents but is not a security boundary against the host page. Use the toolbar/popup.
-- Cross-site HTTPS credential forms can be legitimate SSO. They receive passive destination notices, without phishing alerts or automatic interruptions from that evidence alone.
-- Brand references are finite. Same-site phishing without protected-brand impersonation, unmarked OTP flows, compromised legitimate sites, and new attack styles may be missed.
-- Real-world benign/phishing evaluation, minimum-Chrome-version testing, native prerender/tab replacement, and explicit BFCache activation verification remain release-validation work. The browser suite verifies back navigation and pageshow recovery but does not assert that Chrome used BFCache.
-
-Wallet draining, general malware classification, screenshot models, WHOIS, public-scale reputation feeds, and network blocking remain outside this release. Shared reputation and managed AI are prepared for an invited free-tier pilot; deployment, independent labels, measured model benefit and public-store privacy contact/disclosures are still required before activation or public distribution.
+Built by **[xelulabs](https://github.com/RafBlack/xelulabs)**. Xelu's original artwork, the mark, and packaged fonts are documented in the [visual system](DESIGN.md) and [asset provenance](assets/SOURCE.md).
