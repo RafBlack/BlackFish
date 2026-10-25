@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { formBrandingGate } from '../../scripts/form-branding-gate.js';
 
-const measured = (id,label,before,after,interrupted=false) => ({id,label,suite:'targeted',baseline:{score:before,interrupted:false},candidate:{score:after,interrupted}});
+const measured = (id,label,before,after,interrupted=false) => ({id,label,suite:'targeted',baseline:{score:before,warned:before>=30,interrupted:false},candidate:{score:after,warned:after>=30,interrupted}});
 test('promotion requires new phishing detection with no introduced benign warning or interruption',()=>{
   const improvement = measured('new','phishing',15,45);
   assert.equal(formBrandingGate([improvement,measured('ordinary','benign',15,15)]).passed,true);

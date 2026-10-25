@@ -1,12 +1,11 @@
-import { BF_RISK_THRESHOLDS } from '../lib/heuristics/score.js';
 export function formBrandingGate(rows) {
   const ids = new Set();
-  const warnings = result => result.score >= BF_RISK_THRESHOLDS.MEDIUM;
+  const warnings = result => result.warned;
   for (const row of rows) {
     if (!row.id || ids.has(row.id) || !['benign','phishing','transport'].includes(row.label)) throw new Error('Invalid comparison case.');
     ids.add(row.id);
     for (const result of [row.baseline, row.candidate]) {
-      if (!result || !Number.isFinite(result.score) || result.score < 0 || result.score > 100 || typeof result.interrupted !== 'boolean') throw new Error('Invalid measured comparison.');
+      if (!result || !Number.isFinite(result.score) || result.score < 0 || result.score > 100 || typeof result.warned !== 'boolean' || typeof result.interrupted !== 'boolean') throw new Error('Invalid measured comparison.');
     }
   }
   const select = predicate => rows.filter(predicate).map(row => row.id);

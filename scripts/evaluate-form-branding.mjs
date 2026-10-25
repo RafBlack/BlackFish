@@ -12,7 +12,7 @@ const baselineRaw = await readFile(new URL('../evaluation/corpus.json', import.m
 const baseline = JSON.parse(baselineRaw);
 const fixtures = [...baseline.fixtures.map(item => ({ ...item, suite:'baseline' })), ...FORM_BRANDING_CORPUS.fixtures.map(item => ({ ...item, suite:'targeted' }))];
 const hash = value => createHash('sha256').update(value).digest('hex');
-const sourceNames = ['content/form-branding.js','content/dom-scanner.js','content/form-guard.js','lib/heuristics/score.js','lib/heuristics/brand-list.js','scripts/evaluation-entry.js'];
+const sourceNames = ['content/form-branding.js','content/dom-scanner.js','content/form-guard.js','lib/heuristics/score.js','lib/assessment.js','lib/heuristics/brand-list.js','scripts/evaluation-entry.js'];
 const sourceFingerprint = async () => hash(Buffer.concat(await Promise.all(sourceNames.map(name=>readFile(new URL('../'+name,import.meta.url))))));
 const sourceSha256 = await sourceFingerprint();
 const bundle = await build({entryPoints:[fileURLToPath(new URL('./evaluation-entry.js',import.meta.url))],bundle:true,write:false,format:'iife',globalName:'BlackFishEvaluation',target:'chrome116'});
@@ -39,7 +39,7 @@ try {
   const metrics = key => {
     const group = rows.filter(row=>row.label==='benign');
     const times = rows.map(row=>row[key].scanMs).sort((a,b)=>a-b);
-    return {phishingWarnings:rows.filter(row=>row.label==='phishing' && row[key].score>=30).length,benignWarnings:group.filter(row=>row[key].score>=30).length,benignInterruptions:group.filter(row=>row[key].interrupted).length,scanMs:{median:times[Math.floor(times.length/2)],p95:times[Math.floor(times.length*.95)]}};
+    return {phishingWarnings:rows.filter(row=>row.label==='phishing' && row[key].warned).length,benignWarnings:group.filter(row=>row[key].warned).length,benignInterruptions:group.filter(row=>row[key].interrupted).length,scanMs:{median:times[Math.floor(times.length/2)],p95:times[Math.floor(times.length*.95)]}};
   };
   const report = {generatedAt:new Date().toISOString(),browser:browser.version(),synthetic:true,limitation:'Paired synthetic regressions, including deliberately ambiguous enterprise branding. Execution order alternates; timings are not production latency. Not independent real-world accuracy or evidence of AI benefit.',rulesVersion:RULES_VERSION,candidate:'form-context-v1',defaultEnabled:FORM_BRANDING_ENABLED,baselineCorpusSha256:hash(baselineRaw),targetedCorpusSha256:hash(JSON.stringify(FORM_BRANDING_CORPUS)),sourceSha256,counts:{baseline:baseline.fixtures.length,targeted:FORM_BRANDING_CORPUS.fixtures.length},metrics:{baseline:metrics('baseline'),candidate:metrics('candidate')},gate,results:rows};
   await writeFile(new URL('../evaluation/form-branding-report.json',import.meta.url),JSON.stringify(report,null,2)+'\n');
