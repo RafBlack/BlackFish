@@ -14,6 +14,7 @@ let generation = 0, revision = 0, lastVersion = -1, parentIdentity = [];
 let configRequest = 0;
 let trailing, maximum, discovery, stopped = false, disposed = false, loadPromise;
 const lifecycle = new AbortController();
+const messageCancelled = error => /message (?:channel|port) closed before a response/i.test(error.message);
 async function send(msg) {
   if (!contextActive()) throw new Error('Extension context invalidated.');
   try { return await chrome.runtime.sendMessage(msg); }
@@ -64,7 +65,7 @@ const guard = installFormGuard({
   doc: document, getContext, ready,
   requestDecision: async risk => {
     const response = await send({ type: 'GUARD_REQUEST', configToken, fingerprint: risk.fingerprint, signals: risk.scored.signals, reason: risk.reason }).catch(error => {
-      if (!/message (?:channel|port) closed before a response/i.test(error.message)) throw error;
+      if (!messageCancelled(error)) throw error;
       overlay?.cancelPrompt();
       return { approved: false };
     });
@@ -108,6 +109,7 @@ async function runScan() {
     return { ok: true };
   } catch (error) {
     if (stopped || !contextActive()) return { ok: false, inactive: true };
+    if (messageCancelled(error)) return { ok: false, cancelled: true };
     console.warn('BlackFish scan failed:', error.message);
     try { await report('failed'); } catch {}
     return { ok: false, error: error.message };

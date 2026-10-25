@@ -55,6 +55,16 @@ for(const width of [1440,390]) test('extension reload retires old scans and guar
     await page.locator('#login button').click();
     await waitFor(async()=>(await treeText(context,page)).includes('Check this credential submission'),'pending guard dialog');
     assert.deepEqual(await page.evaluate(()=>window.submissions),[]);
+    await worker.evaluate(()=>{
+      const original=chrome.webNavigation.getAllFrames.bind(chrome.webNavigation);
+      chrome.webNavigation.getAllFrames=async(...args)=>{
+        globalThis.pendingFixtureScan=true;
+        await new Promise(()=>{});
+        return original(...args);
+      };
+    });
+    await page.evaluate(()=>document.body.append(document.createElement('p')));
+    await waitFor(()=>worker.evaluate(()=>globalThis.pendingFixtureScan),'pending scan report');
     await worker.evaluate(()=>chrome.runtime.reload()).catch(error=>{
       if(!/closed|destroyed|Target/.test(error.message))throw error;
     });
